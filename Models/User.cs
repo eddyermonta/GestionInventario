@@ -18,7 +18,7 @@ public class User{
 
     [StringLength(15)]
     public required string PhoneNumber { get; set; }
-    public bool Isactive { get; set; }
+    public bool IsActive { get; set; }
     public required string Email { get; set; }  // Correo electrónico único para cada usuario
     public required string PasswordHash { get; set; }  // Almacenamiento seguro de la contraseña
 }

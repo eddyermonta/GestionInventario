@@ -6,6 +6,7 @@ public class AuthRepository : IAuthRepository
 {
      private static readonly List<AuthRequest> authUsers =
         [
+            new AuthRequest { Email = "test@example.com", Password = "password123" },
             new AuthRequest { Email = "test@example.com", Password = "password123" }
         ];
 
