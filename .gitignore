@@ -1,0 +1,49 @@
+# Compilación de .NET
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.nuget.props
+*.nuget.targets
+
+# Paquetes de NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Archivos de bloqueo o dependencias de paquetes
+project.lock.json
+project.fragment.lock.json
+project.assets.json
+project.nuget.cache
+
+# Configuración de la herramienta de paquete
+.csproj.user
+*.csproj.nuget.g.props
+*.csproj.nuget.g.targets
+
+# Archivos temporales y cachés
+.vscode/
+.vs/
+.idea/
+.ReSharper/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de logs y depuración
+*.log
+*.tlog
+*.log2
+*.tlg
+
+# Sistema operativo
+[Dd]esktop.ini
+[Tt]humbs.db
+*.DS_Store
+
+# Archivos de publicación
+.publish/
