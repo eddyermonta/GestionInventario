@@ -1,6 +1,6 @@
-namespace GestionInventario.Services;
+using GestionInventario.Domain.Models;
 
-using GestionInventario.Models;
+namespace GestionInventario.Services;
 
 public interface IAuthService
     {

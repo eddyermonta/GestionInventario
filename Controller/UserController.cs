@@ -1,8 +1,8 @@
 namespace GestionInventario.Controller;
 
 using System.ComponentModel.DataAnnotations;
-using System.Net.Http.Headers;
-using GestionInventario.Models;
+using GestionInventario.Domain.Dto;
+using GestionInventario.Domain.Models;
 using GestionInventario.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController: ControllerBase{
-    private readonly IUserServices _userService;
-
-    public UserController(IUserServices userService)
-    {
-        _userService = userService;
-    }
+public class UserController(IUserServices userService) : ControllerBase{
+    private readonly IUserServices _userService = userService;
 
     [HttpGet("{email}", Name = "GetUserByEmail")]
     public IActionResult GetUserByEmail([EmailAddress] string email)
@@ -44,18 +39,16 @@ public class UserController: ControllerBase{
     }
 
     [HttpPost(Name = "AddUser")]
-    public IActionResult AddUser([FromBody] User user, [FromQuery] string email)
+    public IActionResult AddUser([FromBody] UserDto user)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
-
-        _userService.AddUser(user, email);
-        return CreatedAtRoute("GetUserByEmail", new { email = email }, user);
+        _userService.AddUser(user);
+        return CreatedAtRoute("GetUserByEmail", new { email = user.Email }, user);
     }
 
     [HttpPut("{email}", Name = "UpdateUser")]
-    public IActionResult UpdateUser([FromBody] User user, [FromRoute] string email )
+    public IActionResult UpdateUser([FromBody] UserDto user, [FromRoute] string email )
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

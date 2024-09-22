@@ -1,4 +1,5 @@
-using GestionInventario.Models;
+using GestionInventario.Domain.Models;
+
 
 namespace GestionInventario.Repository;
 

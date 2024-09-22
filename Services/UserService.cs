@@ -1,32 +1,27 @@
 namespace GestionInventario.Services;
 
 using System.Collections.Generic;
-using GestionInventario.Models;
+using GestionInventario.Domain.Dto;
 using GestionInventario.Repository;
 
-public class UserServices : IUserServices{
-    private readonly IUserRepository _userRepository;
+public class UserServices(IUserRepository userRepository) : IUserServices{
+    private readonly IUserRepository _userRepository = userRepository;
 
-    public UserServices(IUserRepository userRepository)
+    public void AddUser(UserDto user)
     {
-        _userRepository = userRepository;
+        _userRepository.AddUser(user);
     }
-
-    public void AddUser(User user, string email)
-    {
-        _userRepository.AddUser(user, email);
-    }
-    public void UpdateUser(User user,string email)
+    public void UpdateUser(UserDto user,string email)
     {
         _userRepository.UpdateUser(user, email);
     }
 
-    public IEnumerable<User> GetAllUsers()
+    public IEnumerable<UserDto> GetAllUsers()
     {
         return _userRepository.GetAllUsers();
     }
 
-    public User? GetUserByEmail(string email)
+    public UserDto? GetUserByEmail(string email)
     {
         return _userRepository.GetUserByEmail(email);
     }

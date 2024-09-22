@@ -1,14 +1,12 @@
-namespace GestionInventario.Models;
-
 using System.ComponentModel.DataAnnotations;
 
-public class Adress
-{
+namespace GestionInventario.Domain.Dto;
+
+public class AddressDto {
     [RegularExpression(@"^\d{5}$")]
     [DataType(DataType.PostalCode)]
     [Display(Name = "Zip Code")]
     public required int ZipCode { get; set; }
-    
     [StringLength(200)]
     [DataType(DataType.Text)]
     [Display(Name = "Street")]

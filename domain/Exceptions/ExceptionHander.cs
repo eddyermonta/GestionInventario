@@ -1,4 +1,4 @@
-namespace  GestionInventario.Models.Exceptions;
+namespace  GestionInventario.Domain.Exceptions;
 
 using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;

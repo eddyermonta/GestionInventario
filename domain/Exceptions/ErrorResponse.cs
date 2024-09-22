@@ -1,4 +1,4 @@
-namespace GestionInventario.Models.Exceptions;
+namespace GestionInventario.Domain.Exceptions;
 
 public class ErrorResponse
 {

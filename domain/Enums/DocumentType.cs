@@ -1,4 +1,4 @@
-namespace GestionInventario.Models;
+namespace GestionInventario.Domain.Enums;
 public enum DocumentType
 {
     CC,

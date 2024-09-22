@@ -1,4 +1,4 @@
-namespace GestionInventario.Models;
+namespace GestionInventario.Domain.Models;
 
 public class AuthResponse{
     public bool IsSuccessful { get; set; }
