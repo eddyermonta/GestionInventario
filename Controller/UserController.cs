@@ -47,15 +47,4 @@ public class UserController: ControllerBase{
     }
 
 
-    [HttpPut("{id}", Name = "UpdateUser")]
-    public IActionResult UpdateUser(Guid id, User user)
-    {
-        if (id != user.Id || !ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        _userService.UpdateUser(user);
-        return NoContent();
-    }
-
 }

@@ -16,9 +16,9 @@ public class UserServices : IUserServices{
     {
         _userRepository.AddUser(user);
     }
-    public void UpdateUser(User user)
+    public void UpdateUser(User user,string email)
     {
-        _userRepository.UpdateUser(user);
+        _userRepository.UpdateUser(user, email);
     }
 
     public IEnumerable<User> GetAllUsers()
@@ -31,13 +31,13 @@ public class UserServices : IUserServices{
         return _userRepository.GetUserByEmail(email);
     }
 
-    public void ActivateUser(Guid id)
+    public void ActivateUser(string email)
     {
-        _userRepository.ActivateUser(id);
+        _userRepository.ActivateUser(email);
     }
-    public void DeactivateUser(Guid id)
+    public void DeactivateUser(string email)
     {
-        _userRepository.DeactivateUser(id);
+        _userRepository.DeactivateUser(email);
     }
     //validacion de usuario correo y contraseña
 }
