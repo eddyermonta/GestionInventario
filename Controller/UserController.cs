@@ -54,5 +54,13 @@ public class UserController: ControllerBase{
         return CreatedAtRoute("GetUserByEmail", new { email = email }, user);
     }
 
+    [HttpPut("{email}", Name = "UpdateUser")]
+    public IActionResult UpdateUser([FromBody] User user, [FromRoute] string email )
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        _userService.UpdateUser(user, email);
+        return NoContent();
+    }
 
 }
