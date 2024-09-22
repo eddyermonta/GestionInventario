@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 public class Adress
 {
-    [StringLength(10)]
     [RegularExpression(@"^\d{5}$")]
     [DataType(DataType.PostalCode)]
     [Display(Name = "Zip Code")]

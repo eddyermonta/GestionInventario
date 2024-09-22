@@ -1,5 +1,7 @@
 namespace GestionInventario.Controller;
 
+using System.ComponentModel.DataAnnotations;
+using System.Net.Http.Headers;
 using GestionInventario.Models;
 using GestionInventario.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,14 +19,13 @@ public class UserController: ControllerBase{
     }
 
     [HttpGet("{email}", Name = "GetUserByEmail")]
-    public IActionResult GetUserByEmail(string email)
+    public IActionResult GetUserByEmail([EmailAddress] string email)
     {
+        if(!ModelState.IsValid)
+            return BadRequest(ModelState);
         var user = _userService.GetUserByEmail(email);
-
         if (user == null)
-        {
             return NotFound();
-        }
         return Ok(user);
     }
 
@@ -32,18 +33,25 @@ public class UserController: ControllerBase{
     [HttpGet(Name = "GetAllUsers")]
     public IActionResult GetAllUsers()
     {
-        return Ok(_userService.GetAllUsers());
+        var users = _userService.GetAllUsers();
+
+        // Si no hay usuarios, devolver 204 No Content
+        if (!users.Any())
+            return NoContent();
+
+        // Si hay usuarios, devolver 200 OK con la lista
+        return Ok(users);
     }
 
     [HttpPost(Name = "AddUser")]
-    public IActionResult AddUser(User user)
+    public IActionResult AddUser([FromBody] User user, [FromQuery] string email)
     {
         if (!ModelState.IsValid)
-        {
             return BadRequest(ModelState);
-        }
-        _userService.AddUser(user);
-        return CreatedAtRoute("GetUserByEmail", new { email = user.DocumentNumber }, user);
+
+
+        _userService.AddUser(user, email);
+        return CreatedAtRoute("GetUserByEmail", new { email = email }, user);
     }
 
 

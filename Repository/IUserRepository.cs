@@ -3,7 +3,7 @@ using GestionInventario.Models;
 
 public interface IUserRepository
 {
-    void AddUser(User user);
+    void AddUser(User user, string email);
     void UpdateUser(User user, string email);
     User? GetUserByEmail(string email);
     IEnumerable<User> GetAllUsers();

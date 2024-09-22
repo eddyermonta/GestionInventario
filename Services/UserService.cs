@@ -12,9 +12,9 @@ public class UserServices : IUserServices{
         _userRepository = userRepository;
     }
 
-    public void AddUser(User user)
+    public void AddUser(User user, string email)
     {
-        _userRepository.AddUser(user);
+        _userRepository.AddUser(user, email);
     }
     public void UpdateUser(User user,string email)
     {

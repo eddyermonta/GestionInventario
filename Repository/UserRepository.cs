@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
                                         LastName = "Admin",
                                         DocumentType = DocumentType.CC,
                                         DocumentNumber = "123456789",
-                                            Adress = new Adress{
+                                            Address = new Adress{
                                                 ZipCode = 1121,
                                                 City = "Bogotá",
                                                 Country = "Colombia",
@@ -30,9 +30,9 @@ public class UserRepository : IUserRepository
                     );
     }
 
-    public void AddUser(User user)
+    public void AddUser(User user, string email)
     {
-        usersByEmail.Add("",user);
+        usersByEmail.Add(email,user);
     }
 
     public void UpdateUser(User user, string email)
@@ -74,7 +74,7 @@ public class UserRepository : IUserRepository
 
     public void DeactivateUser(string email)
     {
-          if (usersByEmail.TryGetValue(email, out var user))
+        if (usersByEmail.TryGetValue(email, out var user))
         {
             user.IsActive = false;
         }
