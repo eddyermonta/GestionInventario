@@ -1,6 +1,5 @@
 using GestionInventario.Repository;
 using GestionInventario.Services;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +14,8 @@ builder.Services.AddSingleton<IAuthService, AuthService>();
 builder.Services.AddSingleton<IUserServices, UserServices>();
 
 //add repositories to the container
-builder.Services.AddSingleton<IAuthRepository, AuthRepository>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
+
 builder.Services.AddRouting(Options => Options.LowercaseUrls = true);
 
 // Configure Swagger/OpenAPI for the application.

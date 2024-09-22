@@ -26,14 +26,5 @@ public class UserServices(IUserRepository userRepository) : IUserServices{
         return _userRepository.GetUserByEmail(email);
     }
 
-    public void ActivateUser(string email)
-    {
-        _userRepository.ActivateUser(email);
-    }
-    public void DeactivateUser(string email)
-    {
-        _userRepository.DeactivateUser(email);
-    }
-    //validacion de usuario correo y contraseña
 }
 

@@ -1,4 +1,6 @@
-using GestionInventario.Domain.Models;
+
+
+using GestionInventario.Domain.Dto;
 
 namespace GestionInventario.Services;
 

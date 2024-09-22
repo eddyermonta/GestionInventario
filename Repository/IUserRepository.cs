@@ -8,5 +8,6 @@ public interface IUserRepository
     void UpdateUser(UserDto user, string email);
     UserDto? GetUserByEmail(string email);
     IEnumerable<UserDto> GetAllUsers();
+    AuthResponse ValidateUser(string email, string password);
 }
 

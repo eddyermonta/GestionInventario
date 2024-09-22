@@ -15,21 +15,22 @@ public class UserRepository : IUserRepository
         usersByEmail.Add("admin@localhost", new User
         {
             Id = Guid.NewGuid(),
-            Name = "Admin",
-            LastName = "Admin",
+            Name = "Admin User", // Debe tener entre 5 y 30 caracteres y solo letras y espacios
+            LastName = "Admin", // Puede ser nulo, pero si se proporciona, debe cumplir con la validación
             DocumentType = DocumentType.CC,
-            DocumentNumber = "123456789",
-                Address = new Adress{
-                    ZipCode = 1121,
-                    City = "Bogotá",
-                    Country = "Colombia",
-                    State = "Cundinamarca",
-                    Street = "Calle 123"
-                },
-            PhoneNumber = "1234567890",
+            DocumentNumber = "123456789", // Debe tener entre 5 y 15 dígitos
+            Address = new Adress
+            {
+                ZipCode = 11221, // Debe ser un código postal de 5 dígitos
+                Street = "Calle 123", // Debe tener entre 5 y 200 caracteres
+                State = "Cundinamarca", // Debe tener entre 2 y 100 caracteres
+                City = "Bogotá", // Debe tener entre 3 y 100 caracteres
+                Country = "Colombia" // Debe tener entre 3 y 100 caracteres
+            },
+            PhoneNumber = "1234567890", // Debe tener menos de 15 caracteres y solo dígitos
             IsActive = true,
-            Email = "admin@localhost",
-            PasswordHash = "AQAAAAEAACcQAAAAEJ9Q"
+            Email = "admin@localhost", // Debe ser un correo electrónico válido y requerido
+            PasswordHash = "AQAAAAEAACcQ" // Debe tener al menos 8 caracteres, con mayúsculas, minúsculas, números y caracteres especiales
         });
     }
 
@@ -124,6 +125,24 @@ public class UserRepository : IUserRepository
                 };
         }
 
+    public AuthResponse CreateResponse(bool isSuccessful, string message, Guid jwt){
+        return new AuthResponse{
+            IsSuccessful = isSuccessful,
+            Message = message,
+            Jwt = jwt
+        };
+    }
+
+    public AuthResponse ValidateUser(string email, string password)
+    {
+        if (!usersByEmail.TryGetValue(email, out var user))
+            return CreateResponse(false, "El usuario no existe.", Guid.Empty);
+
+        if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            return CreateResponse(false, "Contraseña incorrecta.", Guid.Empty);
+
+        return CreateResponse(true, "Usuario autenticado.", Guid.NewGuid());
+    }
 }
 
 

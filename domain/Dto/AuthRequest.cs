@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace GestionInventario.Domain.Models;
+namespace GestionInventario.Domain.Dto;
 public class AuthRequest
 {
     [Required(ErrorMessage = "The email is required")]

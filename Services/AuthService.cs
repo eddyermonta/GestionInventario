@@ -1,16 +1,17 @@
 namespace GestionInventario.Services;
 
-using GestionInventario.Domain.Models;
+using GestionInventario.Domain.Dto;
 using GestionInventario.Repository;
 
 
 
-public class AuthService(IAuthRepository authRepository) : IAuthService
+public class AuthService(IUserRepository userRepository) : IAuthService
+
 {
-    private readonly IAuthRepository _authRepository = authRepository;
+    private readonly IUserRepository _userRepository = userRepository;
 
     public AuthResponse ValidateUser(string email, string password)
     {
-        return _authRepository.ValidateUser(email, password);
+        return _userRepository.ValidateUser(email, password);
     }
 }
