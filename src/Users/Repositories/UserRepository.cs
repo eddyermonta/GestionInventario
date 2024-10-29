@@ -9,51 +9,57 @@ public class UserRepository(IAuthUserCache authUserCache): IUserRepository
 {
     private readonly Dictionary<string, User> usersByEmail = authUserCache.GetUsersByEmail();
     
-    public IEnumerable<UserDto> GetAllUsers()
+    public IEnumerable<User> GetAllUsers()
     {
-        return usersByEmail.Values.Select(CreateUserDto);
+        return usersByEmail.Values;
     }
 
-    public UserDto? GetUserByEmail(string email)
+    public User? GetUserByEmail(string email)
     {
         if (!usersByEmail.TryGetValue(email, out var user))
-            throw new KeyNotFoundException("El usuario no existe.");
-        return CreateUserDto(user);
+                throw new KeyNotFoundException("El usuario no existe.");
+            return user;
     }
 
-    public void AddUser(UserDto userDto)
+    public void AddUser(User user)
     {
-        if (usersByEmail.ContainsKey(userDto.Email))
-            throw new InvalidOperationException("A user with this email already exists.");
-        var user = CreateAUser(userDto);
-        usersByEmail.Add(user.Email,user);
+        if (usersByEmail.ContainsKey(user.Email))
+                throw new InvalidOperationException("Ya existe un usuario con este correo electrónico.");
+            
+            // Asigna un nuevo ID y hashea la contraseña aquí si es necesario
+            user.Id = Guid.NewGuid();
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash); // Asegúrate de que PasswordHash se maneje correctamente.
+
+            usersByEmail.Add(user.Email, user);
     }
 
-    public void UpdateUser(UserDto user, string email)
+   public void UpdateUser(User user)
+{
+    // Verifica si el usuario existe en el diccionario
+    if (!usersByEmail.TryGetValue(user.Email, out var existingUser))
+        throw new KeyNotFoundException("El usuario no existe.");
+
+    // Actualiza las propiedades del usuario existente con los datos del nuevo objeto user
+    existingUser.Name = user.Name;
+    existingUser.LastName = user.LastName;
+    existingUser.DocumentType = user.DocumentType;
+    existingUser.DocumentNumber = user.DocumentNumber;
+
+    // Actualiza la dirección si existe
+    if (existingUser.Address != null && user.Address != null)
     {
-        if (!usersByEmail.TryGetValue(email, out User? value))
-            throw new KeyNotFoundException("El usuario no existe.");
-
-        var existingUser = value;
-
-        existingUser.Name = user.Name;
-        existingUser.LastName = user.LastName;
-        existingUser.DocumentType = user.DocumentType;
-        existingUser.DocumentNumber = user.DocumentNumber;
-        if (existingUser.Address != null && user.Address != null)
-        {
-            existingUser.Address.ZipCode = user.Address.ZipCode;
-            existingUser.Address.City = user.Address.City;
-            existingUser.Address.Country = user.Address.Country;
-            existingUser.Address.State = user.Address.State;
-            existingUser.Address.Street = user.Address.Street;
-        }
-        existingUser.IsActive = user.IsActive; //aqui activa o inactiva el usuario
-        existingUser.PhoneNumber = user.PhoneNumber;
-        existingUser.Email = user.Email;
-
-        usersByEmail[email] = existingUser;
+        existingUser.Address.ZipCode = user.Address.ZipCode;
+        existingUser.Address.City = user.Address.City;
+        existingUser.Address.Country = user.Address.Country;
+        existingUser.Address.State = user.Address.State;
+        existingUser.Address.Street = user.Address.Street;
     }
+
+    existingUser.IsActive = user.IsActive; // Activa o inactiva el usuario
+    existingUser.PhoneNumber = user.PhoneNumber;
+
+    // No es necesario reasignar existingUser a usersByEmail, ya que ya está referenciado
+}
 
     public static User CreateAUser(UserDto userDto){
         var user = new User
@@ -63,7 +69,7 @@ public class UserRepository(IAuthUserCache authUserCache): IUserRepository
             LastName = userDto.LastName,
             DocumentType = userDto.DocumentType,
             DocumentNumber = userDto.DocumentNumber,
-            Address = new Adress
+            Address = new Address
             {
                 ZipCode = userDto.Address?.ZipCode ?? 0,
                 City = userDto.Address?.City ?? string.Empty,

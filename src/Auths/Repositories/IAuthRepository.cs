@@ -1,10 +1,10 @@
 
-using GestionInventario.src.Auths.Domains.DTOs;
+using GestionInventario.src.Users.Domains.Models;
 
 namespace GestionInventario.src.Auths.Repositories
 {
     public interface IAuthRepository
     {
-        AuthResponse ValidateUser(string email, string password);
+        User? GetUserByEmail(string email);
     }
 }

@@ -1,12 +1,12 @@
-using GestionInventario.src.Users.Domains.DTOs;
+using GestionInventario.src.Users.Domains.Models;
 
 namespace GestionInventario.src.Users.Repositories;
 public interface IUserRepository
 {
-    void AddUser(UserDto userDto);
-    void UpdateUser(UserDto user, string email);
-    UserDto? GetUserByEmail(string email);
-    IEnumerable<UserDto> GetAllUsers();
+    void AddUser(User user);
+    void UpdateUser(User user);
+    User? GetUserByEmail(string email);
+    IEnumerable<User> GetAllUsers();
     
 }
 

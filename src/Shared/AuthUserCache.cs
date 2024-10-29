@@ -19,7 +19,7 @@ namespace GestionInventario.src.Shared
             LastName = "Admin", // Puede ser nulo, pero si se proporciona, debe cumplir con la validación
             DocumentType = DocumentType.CC,
             DocumentNumber = "123456789", // Debe tener entre 5 y 15 dígitos
-            Address = new Adress
+            Address = new Address
             {
                 ZipCode = 11221, // Debe ser un código postal de 5 dígitos
                 Street = "Calle 123", // Debe tener entre 5 y 200 caracteres

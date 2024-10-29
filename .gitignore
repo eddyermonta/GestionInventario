@@ -1,6 +1,7 @@
 # Compilación de .NET
 bin/
 obj/
+Migrations/
 *.exe
 *.dll
 *.pdb
@@ -47,3 +48,7 @@ project.nuget.cache
 
 # Archivos de publicación
 .publish/
+Properties/
+
+src/Proveedores/*
+src/ConsultaInventario/*
