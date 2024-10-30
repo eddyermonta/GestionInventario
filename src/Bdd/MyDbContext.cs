@@ -1,3 +1,4 @@
+using GestionInventario.src.Products.Domain.Models;
 using GestionInventario.src.Users.Domains.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace GestionInventario.src.Bdd
     {
         public DbSet<User> UsersBD { get; set; } 
         public DbSet<Address> AddressesBD { get; set; }
+        public DbSet<Product> ProductsBD { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
             optionsBuilder.UseNpgsql();
