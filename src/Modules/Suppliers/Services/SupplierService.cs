@@ -12,16 +12,18 @@ namespace GestionInventario.src.Modules.Suppliers.Services{
 
         public void AddSupplier(SupplierDto supplierDto)
         {
+            if (_supplierRepository.GetSupplierByNIT(supplierDto.NIT) != null) throw new InvalidOperationException("El proveedor ya existe.");
             if (_supplierRepository.GetSupplierByName(supplierDto.Name) != null) throw new InvalidOperationException("El proveedor ya existe.");
+            
             var supplier = _mapper.Map<Supplier>(supplierDto);
             _supplierRepository.CreateSupplier(supplier);
         }
 
-        public bool DeleteSupplier(SupplierDto supplierDto)
+        public bool DeleteSupplierByNIT(string NIT)
         {
-            var existingSupplier = _supplierRepository.GetSupplierByName(supplierDto.Name);
+            var existingSupplier = _supplierRepository.GetSupplierByNIT(NIT);
             if (existingSupplier == null) return false;
-            _supplierRepository.DeleteSupplier(existingSupplier);
+            _supplierRepository.DeleteSupplierByNIT(existingSupplier);
             return true;
         }
 
@@ -31,17 +33,18 @@ namespace GestionInventario.src.Modules.Suppliers.Services{
             return _mapper.Map<IEnumerable<SupplierDto>>(suppliers);
         }
 
-        public SupplierDto? GetSupplierByName(string name)
+        public SupplierDto? GetSupplierByNIT(string NIT)
         {
-            var supplier = _supplierRepository.GetSupplierByName(name);
+            var supplier = _supplierRepository.GetSupplierByNIT(NIT);
             if (supplier == null) return null;
             return _mapper.Map<SupplierDto>(supplier);
         }
 
-        public bool UpdateSupplier(SupplierDto supplierDto)
+        public bool UpdateSupplier(SupplierUpdateDto supplierDto, string NIT)
         {
-            var existingSupplier = _supplierRepository.GetSupplierByName(supplierDto.Name);
+            var existingSupplier = _supplierRepository.GetSupplierByNIT(NIT);
             if (existingSupplier == null) return false;
+            _mapper.Map(supplierDto, existingSupplier);
             _supplierRepository.UpdateSupplier(existingSupplier);
             return true;
         }

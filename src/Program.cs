@@ -8,6 +8,8 @@ using GestionInventario.src.Modules.Categories.Repositories;
 using GestionInventario.src.Modules.Categories.Services;
 using GestionInventario.src.Modules.Products.Repositories;
 using GestionInventario.src.Modules.Products.Services;
+using GestionInventario.src.Modules.Suppliers.Repositories;
+using GestionInventario.src.Modules.Suppliers.Services;
 using GestionInventario.src.Modules.Users.Domains.Models;
 using GestionInventario.src.Modules.Users.Repositories;
 using GestionInventario.src.Modules.Users.Services;
@@ -39,12 +41,14 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
 
 // Add repositories to the container
 builder.Services.AddScoped<IUserRepository, UserRepositoryBD>();
 builder.Services.AddScoped<IAuthRepository, AuthRepositoryBD>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 
 
 builder.Services.AddDbContext<MyDbContext> (options => 

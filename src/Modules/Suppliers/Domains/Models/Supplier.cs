@@ -7,6 +7,7 @@ namespace GestionInventario.src.Modules.Suppliers.Domains.Models
     public class Supplier
     {
         public Guid Id { get; set; }
+        public required string NIT { get; set; }
         public required string Name { get; set; }
         public required string Phone { get; set; }
         public required string Email { get; set; }

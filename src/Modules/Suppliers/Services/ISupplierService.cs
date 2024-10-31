@@ -3,10 +3,10 @@ namespace GestionInventario.src.Modules.Suppliers.Services
 {
     public interface ISupplierService
     {
-        SupplierDto? GetSupplierByName(string name);
+        SupplierDto? GetSupplierByNIT(string NIT);
         IEnumerable<SupplierDto> GetAllSuppliers();
         void AddSupplier(SupplierDto supplierDto);
-        bool UpdateSupplier(SupplierDto supplierDto);
-        bool DeleteSupplier(SupplierDto supplierDto);
+        bool UpdateSupplier(SupplierUpdateDto supplierDto, string NIT);
+        bool DeleteSupplierByNIT(string NIT);
     }
 }

@@ -11,15 +11,15 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
     {
         private readonly ISupplierService _service = supplierService;
 
-        [HttpGet("{name}", Name = "GetSupplierByName")]
+        [HttpGet("{NIT}", Name = "GetSupplierByNIT")]
         [ProducesResponseType(typeof(SupplierDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetSupplierByName([FromRoute] string name)
+        public IActionResult GetSupplierByNIT([FromRoute] string NIT)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
             
-            var supplier = _service.GetSupplierByName(name); 
+            var supplier = _service.GetSupplierByNIT(NIT); 
             if (supplier == null) return NotFound(); // Devuelve 404 si no se encuentra el proveedor
             return Ok(supplier); // Devuelve 200 y el proveedor
         }
@@ -44,30 +44,30 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
 
             _service.AddSupplier(supplierDto); // Añade el proveedor
 
-            return CreatedAtRoute("GetSupplierByName", new { name = supplierDto.Name }, supplierDto); // Devuelve 201 y el proveedor
+            return CreatedAtRoute("GetSupplierByNIT", new { supplierDto.NIT }, supplierDto); // Devuelve 201 y el proveedor
         }
 
-        [HttpPut(Name = "UpdateSupplier")]
+        [HttpPut("{NIT}", Name = "UpdateSupplier")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateSupplier([FromBody] SupplierDto supplierDto)
+        public IActionResult UpdateSupplier([FromRoute] string NIT, [FromBody] SupplierUpdateDto supplierUpdateDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _service.UpdateSupplier(supplierDto);
+            var success = _service.UpdateSupplier(supplierUpdateDto, NIT);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra el proveedor
 
             return NoContent(); // Devuelve 204 si se ha actualizado correctamente
         }
 
-        [HttpDelete(Name = "DeleteSupplier")]
+        [HttpDelete("{NIT}",Name = "DeleteSupplier")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteSupplier([FromBody]  SupplierDto supplierDto)
+        public IActionResult DeleteSupplierByNIT([FromRoute]  string NIT)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _service.DeleteSupplier(supplierDto);
+            var success = _service.DeleteSupplierByNIT(NIT);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra el proveedor
 
             return NoContent(); // Devuelve 204 si se ha eliminado correctamente
