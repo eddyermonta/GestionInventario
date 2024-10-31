@@ -1,6 +1,0 @@
-@GestionInventario_HostAddress = http://localhost:5128
-
-GET {{GestionInventario_HostAddress}}
-Accept: application/json
-
-###
