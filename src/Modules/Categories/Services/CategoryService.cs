@@ -9,16 +9,31 @@ namespace GestionInventario.src.Modules.Categories.Services
     {
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
         private readonly IMapper _mapper = mapper;
-        public void AddCategory(CategoryDto categoryDto)
+        public (List<CategoryDto> AddedCategories, List<string> ExistingCategories) AddCategories(List<string> namesCategories)
         {
-            if (_categoryRepository.GetCategoryByName(categoryDto.Name) != null) throw new InvalidOperationException("La categoría ya existe.");
-            var category = _mapper.Map<Category>(categoryDto);
-            _categoryRepository.CreateCategory(category);
+            var addedCategories = new List<CategoryDto>();
+            var existingCategories = new List<string>();
+
+            foreach(var name in namesCategories)
+            {
+                if (string.IsNullOrEmpty(name)) throw new InvalidOperationException("El nombre de la categoría no puede ser nulo o vacío.");
+                
+                if (_categoryRepository.GetCategoryByName(name) != null){
+                    existingCategories.Add(name);
+                    continue;
+                }
+
+                var category = new Category { Name = name };
+                _categoryRepository.CreateCategory(category);
+                addedCategories.Add(_mapper.Map<CategoryDto>(category));
+            }
+
+            return (addedCategories, existingCategories);
         }
 
-        public bool DeleteCategory(CategoryDto categoryDto)
+        public bool DeleteCategory(string name)
         {
-            var existingCategory = _categoryRepository.GetCategoryByName(categoryDto.Name);
+            var existingCategory = _categoryRepository.GetCategoryByName(name);
             if (existingCategory == null) return false;
             _categoryRepository.DeleteCategory(existingCategory);
             return true;
@@ -37,10 +52,11 @@ namespace GestionInventario.src.Modules.Categories.Services
             return _mapper.Map<CategoryDto>(category);
         }
 
-        public bool UpdateCategory(CategoryDto categoryDto)
+        public bool UpdateCategory(CategoryDto categoryDto, string name)
         {
-            var existingCategory = _categoryRepository.GetCategoryByName(categoryDto.Name);
+            var existingCategory = _categoryRepository.GetCategoryByName(name);
             if (existingCategory == null) return false;
+            _mapper.Map(categoryDto, existingCategory);
             _categoryRepository.UpdateCategory(existingCategory);
             return true;
         }

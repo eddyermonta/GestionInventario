@@ -33,39 +33,46 @@ namespace GestionInventario.src.Modules.Categories.Controllers
             return Ok(categories); // Devuelve 200 y la lista de categoría
         }
 
-        [HttpPost(Name = "AddCategory")]
+        [HttpPost(Name = "AddCategories")]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddCategory([FromBody] CategoryDto categoryDto)
+        public IActionResult AddCategories([FromBody] CategoryRequest categoryRequest)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
 
-            _categoryService.AddCategory(categoryDto); // Añade la categoría
-
-            return CreatedAtRoute("GetCategoryByName", new { name = categoryDto.Name }, categoryDto); // Devuelve 201 y la categoría
+            try
+            {
+                var (addedCategories, existingCategories) = _categoryService.AddCategories(categoryRequest.NamesCategories);
+                return CreatedAtRoute("GetAllCategories", new {}, new { Added = addedCategories, Existing = existingCategories }); // Devuelve 201 y la lista de categorías añadidas y existentes
+            
+            }
+            catch(InvalidOperationException e)
+            {
+                return BadRequest(new { message = e.Message }); // Devuelve 400 si hay un problema de validación
+            }
         }
 
-        [HttpPut(Name = "UpdateCategory")]
+        [HttpPut("{name}",Name = "UpdateCategory")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateCategory([FromBody] CategoryDto categoryDto)
+        public IActionResult UpdateCategory([FromBody] CategoryDto categoryDto, [FromRoute] string name)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _categoryService.UpdateCategory(categoryDto);
+            var success = _categoryService.UpdateCategory(categoryDto, name);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra la categoría
 
             return NoContent(); // Devuelve 204
         }
         
-        [HttpDelete(Name = "DeleteCategory")]
+        [HttpDelete("{name}",Name = "DeleteCategory")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteCategory([FromBody] CategoryDto categoryDto)
+        public IActionResult DeleteCategory([FromRoute] string name)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _categoryService.DeleteCategory(categoryDto);
+            var success = _categoryService.DeleteCategory(name);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra la categoría
 
             return NoContent(); // Devuelve 204
