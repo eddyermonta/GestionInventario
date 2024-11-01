@@ -2,6 +2,7 @@ using AutoMapper;
 using GestionInventario.src.Modules.Categories.Domain.DTOs;
 using GestionInventario.src.Modules.Categories.Domain.Models;
 using GestionInventario.src.Modules.Categories.Repositories;
+using GestionInventario.src.Modules.Products.Domain.DTOs;
 
 namespace GestionInventario.src.Modules.Categories.Services
 {
@@ -50,6 +51,21 @@ namespace GestionInventario.src.Modules.Categories.Services
             var category = _categoryRepository.GetCategoryByName(name);
             if (category == null) return null;
             return _mapper.Map<CategoryGet>(category);
+        }
+
+        public CategoryProductsDto GetProductByName(string categoryName)
+        {
+            var category = _categoryRepository.GetProductsByCategoryName(categoryName);
+            if (category == null) return new CategoryProductsDto { Products = [] };
+            
+            var products = category
+            .Select(_mapper.Map<ProductResponse>)
+            .ToList();
+            
+            return new CategoryProductsDto
+            {
+                Products = products
+            };
         }
 
         public bool UpdateCategory(CategoryDto categoryDto, string name)

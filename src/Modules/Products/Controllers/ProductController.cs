@@ -23,32 +23,6 @@ namespace GestionInventario.src.Modules.Products.Controllers
         private readonly ISupplierService _supplierService = supplierService;
         private readonly ICategoryService _categoryService = categoryService;
         
-
-        
-        [HttpGet("{name}", Name = "GetProductByName")]
-        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetProductByName([FromRoute] string name)
-        {
-            if(!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var product = _productService.GetProductByName(name);
-            if (product == null) return NotFound(); // Devuelve 404 si no se encuentra el producto
-            return Ok(product); // Devuelve 200 y el producto
-        }
-
-        [HttpGet(Name = "GetAllProducts")]
-        [ProducesResponseType(typeof(IEnumerable<ProductResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult GetAllProducts()
-        {
-            var products = _productService.GetAllProducts();
-            if (!products.Any()) return NoContent(); // Devuelve 204 si no hay producto
-
-            return Ok(products); // Devuelve 200 y la lista de producto
-        }
-
-
         [HttpPost ("{NIT}",Name = "AddProduct")]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

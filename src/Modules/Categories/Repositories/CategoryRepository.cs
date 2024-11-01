@@ -1,5 +1,7 @@
 using GestionInventario.src.Data;
 using GestionInventario.src.Modules.Categories.Domain.Models;
+using GestionInventario.src.Modules.Products.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionInventario.src.Modules.Categories.Repositories
 {
@@ -26,6 +28,15 @@ namespace GestionInventario.src.Modules.Categories.Repositories
         public Category GetCategoryByName(string name)
         {
             return _context.CategoriesBD.FirstOrDefault(c => c.Name == name)!;
+        }
+
+        public IEnumerable<Product> GetProductsByCategoryName(string categoryName)
+        {
+             return [.. _context.CategoriesBD
+            .Include(c => c.ProductCategories) // Incluir ProductCategories
+            .ThenInclude(pc => pc.Product) // Incluir Product en ProductCategories
+            .Where(c => c.Name.ToLower() == categoryName.ToLower()) // Filtrar por categoría
+            .SelectMany(c => c.ProductCategories.Select(pc => pc.Product))]; // Convierte a lista
         }
 
         public void UpdateCategory(Category category)

@@ -6,6 +6,8 @@ using GestionInventario.src.Modules.Auths.Repositories;
 using GestionInventario.src.Modules.Auths.Services;
 using GestionInventario.src.Modules.Categories.Repositories;
 using GestionInventario.src.Modules.Categories.Services;
+using GestionInventario.src.Modules.Inventories.Services;
+using GestionInventario.src.Modules.Movements.Services;
 using GestionInventario.src.Modules.ProductCategories.Repositories;
 using GestionInventario.src.Modules.ProductCategories.Services;
 using GestionInventario.src.Modules.Products.Repositories;
@@ -45,6 +47,9 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<IMovementManualService, MovementManualService>();
+builder.Services.AddScoped<IMovementSupplierService, MovementSupplierService>();
+builder.Services.AddScoped<IInventaryService , InventaryService>();
 
 // Add repositories to the container
 builder.Services.AddScoped<IUserRepository, UserRepositoryBD>();
@@ -75,6 +80,13 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>{
 builder.Configuration.AddJsonFile("Properties/appsettings.BDD.json", optional: true, reloadOnChange: true);
 
 var app = builder.Build();
+
+/*using (var scope = app.Services.CreateScope())
+{
+    var inventaryService = scope.ServiceProvider.GetRequiredService<IInventaryService>();
+    inventaryService.FillInventary();
+}
+*/
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("BDD"))

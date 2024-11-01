@@ -1,4 +1,5 @@
 using GestionInventario.src.Modules.Categories.Domain.Models;
+using GestionInventario.src.Modules.Movements.Domains.Models;
 using GestionInventario.src.Modules.ProductCategories.Domain.Model;
 using GestionInventario.src.Modules.Products.Domain.Models;
 using GestionInventario.src.Modules.Suppliers.Domains.Models;

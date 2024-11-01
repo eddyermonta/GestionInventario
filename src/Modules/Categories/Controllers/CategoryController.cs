@@ -10,18 +10,6 @@ namespace GestionInventario.src.Modules.Categories.Controllers
     {
         private readonly ICategoryService _categoryService = categoryService;
 
-        [HttpGet("{name}", Name = "GetCategoryByName")]
-        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetCategoryByName([FromRoute] string name)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var category = _categoryService.GetCategoryByName(name);
-            if (category == null) return NotFound(); // Devuelve 404 si no se encuentra la categoría
-            return Ok(category); // Devuelve 200 y la categoría
-        }
-
         [HttpGet(Name = "GetAllCategories")]
         [ProducesResponseType(typeof(IEnumerable<CategoryDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -32,6 +20,19 @@ namespace GestionInventario.src.Modules.Categories.Controllers
 
             return Ok(categories); // Devuelve 200 y la lista de categoría
         }
+
+        [HttpGet("{nameCategory}", Name = "GetCategoryByName")]
+        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetCategoryByName([FromRoute] string nameCategory)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
+            var category = _categoryService.GetCategoryByName(nameCategory);
+            if (category == null) return NotFound(); // Devuelve 404 si no se encuentra la categoría
+            return Ok(category); // Devuelve 200 y la categoría
+        }
+
 
         [HttpPost(Name = "AddCategories")]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
