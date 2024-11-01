@@ -4,16 +4,16 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**addCategory**](CategoryApi.md#addCategory) | **POST** /api/category |  |
-| [**deleteCategory**](CategoryApi.md#deleteCategory) | **DELETE** /api/category |  |
+| [**addCategories**](CategoryApi.md#addCategories) | **POST** /api/category |  |
+| [**deleteCategory**](CategoryApi.md#deleteCategory) | **DELETE** /api/category/{name} |  |
 | [**getAllCategories**](CategoryApi.md#getAllCategories) | **GET** /api/category |  |
 | [**getCategoryByName**](CategoryApi.md#getCategoryByName) | **GET** /api/category/{name} |  |
-| [**updateCategory**](CategoryApi.md#updateCategory) | **PUT** /api/category |  |
+| [**updateCategory**](CategoryApi.md#updateCategory) | **PUT** /api/category/{name} |  |
 
 
-<a name="addCategory"></a>
-# **addCategory**
-> CategoryDto addCategory(CategoryDto)
+<a name="addCategories"></a>
+# **addCategories**
+> CategoryDto addCategories(CategoryRequest)
 
 
 
@@ -21,7 +21,7 @@ All URIs are relative to *http://localhost*
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **CategoryDto** | [**CategoryDto**](../Models/CategoryDto.md)|  | [optional] |
+| **CategoryRequest** | [**CategoryRequest**](../Models/CategoryRequest.md)|  | [optional] |
 
 ### Return type
 
@@ -38,7 +38,7 @@ No authorization required
 
 <a name="deleteCategory"></a>
 # **deleteCategory**
-> deleteCategory(CategoryDto)
+> deleteCategory(name)
 
 
 
@@ -46,7 +46,7 @@ No authorization required
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **CategoryDto** | [**CategoryDto**](../Models/CategoryDto.md)|  | [optional] |
+| **name** | **String**|  | [default to null] |
 
 ### Return type
 
@@ -58,7 +58,7 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: application/json, text/json, application/*+json
+- **Content-Type**: Not defined
 - **Accept**: text/plain, application/json, text/json
 
 <a name="getAllCategories"></a>
@@ -110,7 +110,7 @@ No authorization required
 
 <a name="updateCategory"></a>
 # **updateCategory**
-> updateCategory(CategoryDto)
+> updateCategory(name, CategoryDto)
 
 
 
@@ -118,6 +118,7 @@ No authorization required
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
+| **name** | **String**|  | [default to null] |
 | **CategoryDto** | [**CategoryDto**](../Models/CategoryDto.md)|  | [optional] |
 
 ### Return type

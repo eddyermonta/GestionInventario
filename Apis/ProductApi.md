@@ -4,16 +4,16 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**addProduct**](ProductApi.md#addProduct) | **POST** /api/product |  |
-| [**deleteProduct**](ProductApi.md#deleteProduct) | **DELETE** /api/product |  |
+| [**addProduct**](ProductApi.md#addProduct) | **POST** /api/product/{NIT} |  |
+| [**deleteProduct**](ProductApi.md#deleteProduct) | **DELETE** /api/product/{name} |  |
 | [**getAllProducts**](ProductApi.md#getAllProducts) | **GET** /api/product |  |
 | [**getProductByName**](ProductApi.md#getProductByName) | **GET** /api/product/{name} |  |
-| [**updateProduct**](ProductApi.md#updateProduct) | **PUT** /api/product |  |
+| [**updateProduct**](ProductApi.md#updateProduct) | **PUT** /api/product/{name} |  |
 
 
 <a name="addProduct"></a>
 # **addProduct**
-> ProductDto addProduct(ProductDto)
+> ProductResponse addProduct(NIT, ProductRequest)
 
 
 
@@ -21,11 +21,12 @@ All URIs are relative to *http://localhost*
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **ProductDto** | [**ProductDto**](../Models/ProductDto.md)|  | [optional] |
+| **NIT** | **String**|  | [default to null] |
+| **ProductRequest** | [**ProductRequest**](../Models/ProductRequest.md)|  | [optional] |
 
 ### Return type
 
-[**ProductDto**](../Models/ProductDto.md)
+[**ProductResponse**](../Models/ProductResponse.md)
 
 ### Authorization
 
@@ -38,7 +39,7 @@ No authorization required
 
 <a name="deleteProduct"></a>
 # **deleteProduct**
-> deleteProduct(ProductDto)
+> deleteProduct(name)
 
 
 
@@ -46,7 +47,7 @@ No authorization required
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **ProductDto** | [**ProductDto**](../Models/ProductDto.md)|  | [optional] |
+| **name** | **String**|  | [default to null] |
 
 ### Return type
 
@@ -58,7 +59,7 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: application/json, text/json, application/*+json
+- **Content-Type**: Not defined
 - **Accept**: text/plain, application/json, text/json
 
 <a name="getAllProducts"></a>
@@ -72,7 +73,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**List**](../Models/ProductDto.md)
+[**List**](../Models/ProductResponse.md)
 
 ### Authorization
 
@@ -85,7 +86,7 @@ No authorization required
 
 <a name="getProductByName"></a>
 # **getProductByName**
-> ProductDto getProductByName(name)
+> ProductResponse getProductByName(name)
 
 
 
@@ -97,7 +98,7 @@ No authorization required
 
 ### Return type
 
-[**ProductDto**](../Models/ProductDto.md)
+[**ProductResponse**](../Models/ProductResponse.md)
 
 ### Authorization
 
@@ -110,7 +111,7 @@ No authorization required
 
 <a name="updateProduct"></a>
 # **updateProduct**
-> updateProduct(ProductDto)
+> updateProduct(name, ProductUpdateDto)
 
 
 
@@ -118,7 +119,8 @@ No authorization required
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **ProductDto** | [**ProductDto**](../Models/ProductDto.md)|  | [optional] |
+| **name** | **String**|  | [default to null] |
+| **ProductUpdateDto** | [**ProductUpdateDto**](../Models/ProductUpdateDto.md)|  | [optional] |
 
 ### Return type
 

@@ -85,7 +85,7 @@ No authorization required
 
 <a name="getSupplierByNIT"></a>
 # **getSupplierByNIT**
-> SupplierDto getSupplierByNIT(NIT)
+> SupplierGetElementDto getSupplierByNIT(NIT)
 
 
 
@@ -97,7 +97,7 @@ No authorization required
 
 ### Return type
 
-[**SupplierDto**](../Models/SupplierDto.md)
+[**SupplierGetElementDto**](../Models/SupplierGetElementDto.md)
 
 ### Authorization
 
