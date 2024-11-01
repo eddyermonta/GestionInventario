@@ -45,11 +45,11 @@ namespace GestionInventario.src.Modules.Categories.Services
             return _mapper.Map<IEnumerable<CategoryDto>>(categories);
         }
 
-        public CategoryDto? GetCategoryByName(string name)
+        public CategoryGet? GetCategoryByName(string name)
         {
             var category = _categoryRepository.GetCategoryByName(name);
             if (category == null) return null;
-            return _mapper.Map<CategoryDto>(category);
+            return _mapper.Map<CategoryGet>(category);
         }
 
         public bool UpdateCategory(CategoryDto categoryDto, string name)

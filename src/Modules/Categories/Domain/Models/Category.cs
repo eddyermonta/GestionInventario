@@ -1,5 +1,7 @@
 
 
+using GestionInventario.src.Modules.ProductCategories.Domain.Model;
+
 namespace GestionInventario.src.Modules.Categories.Domain.Models
 {
     public class Category

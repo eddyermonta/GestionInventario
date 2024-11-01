@@ -33,11 +33,11 @@ namespace GestionInventario.src.Modules.Suppliers.Services{
             return _mapper.Map<IEnumerable<SupplierDto>>(suppliers);
         }
 
-        public SupplierDto? GetSupplierByNIT(string NIT)
+        public SupplierGetElementDto? GetSupplierByNIT(string NIT)
         {
             var supplier = _supplierRepository.GetSupplierByNIT(NIT);
             if (supplier == null) return null;
-            return _mapper.Map<SupplierDto>(supplier);
+            return _mapper.Map<SupplierGetElementDto>(supplier);
         }
 
         public bool UpdateSupplier(SupplierUpdateDto supplierDto, string NIT)

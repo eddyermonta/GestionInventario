@@ -3,11 +3,11 @@ namespace GestionInventario.src.Modules.Products.Services
 {
     public interface IProductService
     {
-        ProductDto? GetProductByName(string name);
-        IEnumerable<ProductDto> GetAllProducts();
-        void AddProduct(ProductDto productDto);
-        bool UpdateProduct(ProductDto productDto);
-        bool DeleteProduct(ProductDto productDto);
+        ProductResponse? GetProductByName(string name);
+        IEnumerable<ProductResponse> GetAllProducts();
+        ProductRequestDto AddProduct(ProductRequest productRequest, Guid supplierId);
+        bool UpdateProduct(ProductUpdateDto productUpdateDto, string name);
+        bool DeleteProduct(string name);
         
     }
 }

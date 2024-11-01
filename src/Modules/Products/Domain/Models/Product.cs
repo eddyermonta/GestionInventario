@@ -1,4 +1,5 @@
-using GestionInventario.src.Modules.Categories.Domain.Models;
+
+using GestionInventario.src.Modules.ProductCategories.Domain.Model;
 using GestionInventario.src.Modules.Suppliers.Domains.Models;
 namespace GestionInventario.src.Modules.Products.Domain.Models
 {
@@ -10,8 +11,8 @@ namespace GestionInventario.src.Modules.Products.Domain.Models
         public required ICollection<ProductCategory> ProductCategories  { get; set; } = [];
         public  required int Amount { get; set; }
         public required decimal UnitPrice { get; set; } 
-        public DateTime? ExpirationDate { get; set; }
-        public UnitMeasurement UnitMeasurement { get; set; }
+        public DateOnly? ExpirationDate { get; set; }
+        public Mesurement? Weight { get; set; }
         
         //foreign key for supplier        
         public Guid SupplierId { get; set; }

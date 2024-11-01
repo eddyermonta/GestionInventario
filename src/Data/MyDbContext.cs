@@ -1,4 +1,5 @@
 using GestionInventario.src.Modules.Categories.Domain.Models;
+using GestionInventario.src.Modules.ProductCategories.Domain.Model;
 using GestionInventario.src.Modules.Products.Domain.Models;
 using GestionInventario.src.Modules.Suppliers.Domains.Models;
 using GestionInventario.src.Modules.Users.Domains.Models;
@@ -14,6 +15,7 @@ namespace GestionInventario.src.Data
         public required DbSet<Product> ProductsBD { get; set; }
         public required DbSet<Supplier> SuppliersBD { get; set; }
         public required DbSet<Category> CategoriesBD { get; set; }
+        public required DbSet<ProductCategory> ProductCategoriesBD { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
             optionsBuilder.UseNpgsql();
@@ -30,7 +32,8 @@ namespace GestionInventario.src.Data
             builder.Entity<ProductCategory>()
                 .HasOne(pc => pc.Product)
                 .WithMany(p => p.ProductCategories)
-                .HasForeignKey(pc => pc.ProductId);
+                .HasForeignKey(pc => pc.ProductId)
+                .OnDelete(DeleteBehavior.Cascade); // Eliminar ProductCategory si el producto es eliminado
 
             builder.Entity<ProductCategory>()
                 .HasOne(pc => pc.Category)
@@ -57,6 +60,13 @@ namespace GestionInventario.src.Data
                 .WithOne(a => a.Supplier)
                 .HasForeignKey<Supplier>(s => s.AddressId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Product>()
+            .OwnsOne(p => p.Weight, w =>
+            {
+                w.Property(x => x.Value).HasColumnName("Weight_Value");
+                w.Property(x => x.Unit).HasColumnName("Weight_Unit");
+            });
 
         }
     }

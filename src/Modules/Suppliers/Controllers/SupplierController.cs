@@ -12,7 +12,7 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
         private readonly ISupplierService _service = supplierService;
 
         [HttpGet("{NIT}", Name = "GetSupplierByNIT")]
-        [ProducesResponseType(typeof(SupplierDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SupplierGetElementDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetSupplierByNIT([FromRoute] string NIT)
