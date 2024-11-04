@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GestionInventario.src.Modules.Users.Domains.DTOS
 {
-    public class UserUpdateDto
+    public class UserUpdateRequest
     {
     [StringLength(30, MinimumLength = 5, ErrorMessage = "The name must be between 5 and 30 characters")]
     [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "The name can only contain letters and spaces")]
@@ -15,7 +15,7 @@ namespace GestionInventario.src.Modules.Users.Domains.DTOS
 
     [RegularExpression(@"^\d{5,15}$", ErrorMessage = "The document number must be between 5 and 15 digits.")]
     public string? DocumentNumber { get; set; }
-    public AddressUpdateDto? Address { get; set; }
+    public AddressUpdateRequest? Address { get; set; }
 
     [StringLength(15, ErrorMessage = "The phone number must be lower than 15 characters")]
     [RegularExpression(@"^\d+$", ErrorMessage = "The phone number must only contain digits")]

@@ -14,6 +14,7 @@ using GestionInventario.src.Modules.Suppliers.Domains.Models;
 using GestionInventario.src.Modules.Users.Domains.DTOs;
 using GestionInventario.src.Modules.Users.Domains.DTOS;
 using GestionInventario.src.Modules.Users.Domains.Models;
+using GestionInventario.src.Modules.Users.Domains.Models.Enums;
 
 namespace GestionInventario.src.Core.AutoMapperPrf
 {
@@ -139,22 +140,28 @@ namespace GestionInventario.src.Core.AutoMapperPrf
                         !string.IsNullOrEmpty(src.Address.State) ||
                         !string.IsNullOrEmpty(src.Address.Country) ||
                         src.Address.ZipCode != 0));
-                    opt.MapFrom(src => src.Address != null ? new AddressUpdateDto
+                    opt.MapFrom(src => src.Address != null ? new AddressUpdateRequest
                     {
                         ZipCode = src.Address.ZipCode ?? 0,
                         City = src.Address.City ?? string.Empty,
                         Country = src.Address.Country ?? string.Empty,
                         State = src.Address.State ?? string.Empty,
                         Street = src.Address.Street ?? string.Empty
-                    } : new AddressUpdateDto());
+                    } : new AddressUpdateRequest());
                 });
         }
 
         private void CreateUserMaps()
         {
-            CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, UserResponse>().
+            ForMember(dest => dest.DocumentType, opt => opt.MapFrom
+            (
+                src =>  src.DocumentType == DocumentType.CC? "CC":"CE"
+            )).ReverseMap();
 
-            CreateMap<UserUpdateDto, User>()
+            CreateMap<User, UserRequest>().ReverseMap();
+
+            CreateMap<UserUpdateRequest, User>()
                 .ForMember(dest => dest.Name, opt =>
                 {
                     opt.PreCondition(src => !string.IsNullOrEmpty(src.Name));
@@ -179,27 +186,62 @@ namespace GestionInventario.src.Core.AutoMapperPrf
                     opt.MapFrom(src => src.IsActive)) // Asignamos directamente ya que IsActive es bool
                 .ForMember(dest => dest.Address, opt => 
                 {
-                    opt.PreCondition(src => src.Address != null &&
+                    opt.PreCondition
+                    (
+                        src => src.Address != null &&
                         (!string.IsNullOrEmpty(src.Address.Street) ||
                         !string.IsNullOrEmpty(src.Address.City) ||
                         !string.IsNullOrEmpty(src.Address.State) ||
                         !string.IsNullOrEmpty(src.Address.Country) ||
-                        src.Address.ZipCode != 0));
-                    opt.MapFrom(src => src.Address != null ? new AddressUpdateDto
+                        src.Address.ZipCode != 0)
+                    );
+
+                    opt.MapFrom(src => src.Address != null ? new AddressUpdateRequest
                     {
-                        ZipCode = src.Address.ZipCode ?? 0,
-                        City = src.Address.City ?? string.Empty,
-                        Country = src.Address.Country ?? string.Empty,
-                        State = src.Address.State ?? string.Empty,
-                        Street = src.Address.Street ?? string.Empty
-                    } : new AddressUpdateDto());
+                        ZipCode = src.Address.ZipCode,
+                        City = src.Address.City,
+                        Country = src.Address.Country,
+                        State = src.Address.State,
+                        Street = src.Address.Street
+                    } : new AddressUpdateRequest());
                 });
         }
 
         private void CreateAddressMaps()
         {
-            CreateMap<Address, AddressDto>().ReverseMap();
+            CreateMap<Address, AddressResponse>().ReverseMap();
+            CreateMap<Address, AddressRequest>().ReverseMap();
+           
+            CreateMap<Address, AddressUpdateRequest>()
+            .ForMember(dest => dest.ZipCode, opt =>
+            {
+                opt.PreCondition(src => src.ZipCode != 0);
+                opt.MapFrom(src => src.ZipCode);
+            })
+            .ForMember(dest => dest.City, opt =>
+            {
+                opt.PreCondition(src => !string.IsNullOrEmpty(src.City));
+                opt.MapFrom(src => src.City);
+            })
+            .ForMember(dest => dest.Country, opt =>
+            {
+                opt.PreCondition(src => !string.IsNullOrEmpty(src.Country));
+                opt.MapFrom(src => src.Country);
+            })
+            .ForMember(dest => dest.State, opt =>
+            {
+                opt.PreCondition(src => !string.IsNullOrEmpty(src.State));
+                opt.MapFrom(src => src.State);
+            })
+            .ForMember(dest => dest.Street, opt =>
+            {
+                opt.PreCondition(src => !string.IsNullOrEmpty(src.Street));
+                opt.MapFrom(src => src.Street);
+            })
+            .ReverseMap();
+
             CreateMap<Address, AddressGetElementDto>().ReverseMap();
+            
         }
     }
 }

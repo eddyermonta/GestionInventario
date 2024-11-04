@@ -13,6 +13,6 @@ namespace GestionInventario.src.Modules.Suppliers.Domains.DTOs
 
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
         public string? Email { get; set; }
-        public AddressUpdateDto? Address { get; set; }    
+        public AddressUpdateRequest? Address { get; set; }    
     }
 }

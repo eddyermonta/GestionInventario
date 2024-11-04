@@ -22,6 +22,6 @@ namespace GestionInventario.src.Modules.Suppliers.Domains.DTOs
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
         public required string Email { get; set; }
-        public required AddressDto Address { get; set; }
+        public required AddressRequest Address { get; set; }
     }
 }

@@ -10,40 +10,39 @@ namespace GestionInventario.src.Modules.Users.Services
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IMapper _mapper = mapper;
-        public void AddUser(UserDto userDto)
+        public UserResponse? AddUser(UserRequest userRequest)
         {
-            if (_userRepository.GetUserByEmail(userDto.Email) != null) throw new InvalidOperationException("El usuario ya existe.");
-             
-            var user = _mapper.Map<User>(userDto);
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password); // Hashea la contraseña
+            if (_userRepository.GetUserByEmail(userRequest.Email) != null) return null; // Indicate failure
+            var user = _mapper.Map<User>(userRequest);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userRequest.Password); // Hashea la contraseña
             _userRepository.AddUser(user);
+            return _mapper.Map<UserResponse>(user);
         }
 
-        public IEnumerable<UserDto> GetAllUsers()
+        public IEnumerable<UserResponse> GetAllUsers()
         {
             var users = _userRepository.GetAllUsers();
-            return _mapper.Map<IEnumerable<UserDto>>(users);
+            return _mapper.Map<IEnumerable<UserResponse>>(users);
         }
 
-        public UserDto? GetUserByEmail(string email)
+        public UserResponse? GetUserByEmail(string email)
         {
             var user = _userRepository.GetUserByEmail(email);
             if (user == null) return null;
 
-            return _mapper.Map<UserDto>(user);
+            return _mapper.Map<UserResponse>(user);
         }
 
-        public bool UpdateUser(UserUpdateDto userUpdateDto, string email)
+        public bool UpdateUser(UserUpdateRequest userUpdateRequest, string email)
         {
             var existingUser = _userRepository.GetUserByEmail(email);
             if (existingUser == null) return false; // Indicate failure
-
-            _mapper.Map(userUpdateDto, existingUser);
-            if (!string.IsNullOrEmpty(userUpdateDto.Password))
-                 existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userUpdateDto.Password);
             
-            _userRepository.UpdateUser(existingUser);
-
+            var userUpdated = _mapper.Map(userUpdateRequest, existingUser);
+            
+            if (!string.IsNullOrEmpty(userUpdateRequest.Password)) existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userUpdateRequest.Password);
+            
+            _userRepository.UpdateUser(userUpdated);
             return true;
         }
     }
