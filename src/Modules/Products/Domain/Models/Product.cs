@@ -1,4 +1,5 @@
 
+using GestionInventario.src.Modules.Movements.Domains.Models;
 using GestionInventario.src.Modules.ProductCategories.Domain.Model;
 using GestionInventario.src.Modules.Suppliers.Domains.Models;
 namespace GestionInventario.src.Modules.Products.Domain.Models
@@ -17,6 +18,7 @@ namespace GestionInventario.src.Modules.Products.Domain.Models
         //foreign key for supplier        
         public Guid SupplierId { get; set; }
         public required Supplier Supplier { get; set; }
+        public virtual ICollection<Movement> Movements { get; set; } = [];
     
     }
 }

@@ -17,6 +17,7 @@ namespace GestionInventario.src.Data
         public required DbSet<Supplier> SuppliersBD { get; set; }
         public required DbSet<Category> CategoriesBD { get; set; }
         public required DbSet<ProductCategory> ProductCategoriesBD { get; set; }
+        public required DbSet<Movement> MovementsBD { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
             optionsBuilder.UseNpgsql();
@@ -68,6 +69,12 @@ namespace GestionInventario.src.Data
                 w.Property(x => x.Value).HasColumnName("Weight_Value");
                 w.Property(x => x.Unit).HasColumnName("Weight_Unit");
             });
+
+            builder.Entity<Product>()
+            .HasMany(p => p.Movements)
+            .WithOne(m => m.Product)
+            .HasForeignKey(m => m.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

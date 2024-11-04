@@ -3,6 +3,8 @@
 using AutoMapper;
 using GestionInventario.src.Modules.Categories.Domain.DTOs;
 using GestionInventario.src.Modules.Categories.Domain.Models;
+using GestionInventario.src.Modules.Movements.Domains.DTOs;
+using GestionInventario.src.Modules.Movements.Domains.Models;
 using GestionInventario.src.Modules.ProductCategories.Domain.DTOs;
 using GestionInventario.src.Modules.ProductCategories.Domain.Model;
 using GestionInventario.src.Modules.Products.Domain.DTOs;
@@ -25,6 +27,12 @@ namespace GestionInventario.src.Core.AutoMapperPrf
             CreateSupplierMaps();
             CreateUserMaps();
             CreateAddressMaps();
+            CreateMovementMaps();
+        }
+
+        private void CreateMovementMaps()
+        {
+            CreateMap<Movement, MovementResponse>().ReverseMap();
         }
 
         private void CreateProductMaps()

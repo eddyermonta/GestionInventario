@@ -1,5 +1,9 @@
-using GestionInventario.src.Modules.Inventories.Services;
+using AutoMapper;
+using GestionInventario.src.Data;
 using GestionInventario.src.Modules.Movements.Domains.DTOs;
+using GestionInventario.src.Modules.Movements.Domains.Models;
+using GestionInventario.src.Modules.Movements.Repositories;
+using GestionInventario.src.Modules.Products.Domain.Models;
 using GestionInventario.src.Modules.Products.Repositories;
 
 namespace GestionInventario.src.Modules.Movements.Services
@@ -7,34 +11,85 @@ namespace GestionInventario.src.Modules.Movements.Services
        public class MovementManualService
        (
         IProductRepository productRepository,
-        IInventaryService inventaryService
+        IMovementRepository movementRepository,
+        IMapper mapper,
+        MyDbContext context
        ) : IMovementManualService
        {
         private readonly IProductRepository _productRepository = productRepository;
-        private readonly IInventaryService _inventaryService = inventaryService;
-
-        public void AddInventoryStock(MovementDto movementDto)
+        private readonly IMovementRepository _movementRepository = movementRepository;
+        protected readonly IMapper _mapper = mapper;
+        private readonly MyDbContext _context = context;
+        public MovementResponse? AddInventoryStock(MovementRequest movementRequest)
         {
-            var product = _productRepository.GetProductByName(movementDto.ProductName);
-            product.Amount += movementDto.Amount;
-            _productRepository.UpdateProduct(product);
-
-            AddMovement(movementDto);
-        }
-
-        public void ReduceInventoryStock(MovementDto movementDto)
-        {
-             var product = _productRepository.GetProductByName(movementDto.ProductName);
-            product.Amount -= movementDto.Amount;
-            _productRepository.UpdateProduct(product);
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var product = _productRepository.GetProductByName(movementRequest.ProductName);
+                if (product == null) return null;
             
-            AddMovement(movementDto);
-        }
+                product.Amount += movementRequest.Amount;
+                _productRepository.UpdateProduct(product); // actualiza la cantidad de productos  
+                var movementResponse = AddMovement(product, movementRequest);
 
-        private void AddMovement(MovementDto movementDto)
+             return movementResponse;
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+            
+
+        public MovementResponse? ReduceInventoryStock(MovementRequest movementRequest)
         {
-            _inventaryService.AddMovement(movementDto);
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var product = _productRepository.GetProductByName(movementRequest.ProductName);
+                if (product == null) return null;
+           
+                if(product.Amount < movementRequest.Amount) return null; // si la cantidad de productos es menor a la cantidad que se quiere reducir, retorna null
+                product.Amount -= movementRequest.Amount;
+                _productRepository.UpdateProduct(product); // actualiza la cantidad de productos
+                var movementResponse = AddMovement(product, movementRequest);  
+
+                transaction.Commit();
+                return movementResponse;  
+
+            }catch
+            {
+                transaction.Rollback();
+                throw;
+            }
             
         }
+
+        private static MovementResponse ProductToMovementResponse(Product product, MovementRequest movementRequest)
+        {
+            return new MovementResponse
+            {
+                Date = DateTime.UtcNow,
+                Amount = product.Amount,
+                Reason = movementRequest.Reason,
+                ProductName = product.Name,
+                CategoryMov = movementRequest.CategoryMov
+            };
+        }
+
+        private MovementResponse AddMovement(Product product, MovementRequest movementRequest)
+        {
+            var movementResponse = ProductToMovementResponse(product, movementRequest); 
+            var movement = _mapper.Map<Movement>(movementResponse);
+
+            movement.ProductId = product.Id;
+            movement.Product = product;
+            _movementRepository.Add(movement);
+            
+            return movementResponse;
+        }
+
+    
     }
 }

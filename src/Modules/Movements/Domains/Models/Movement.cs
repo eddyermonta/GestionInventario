@@ -10,6 +10,7 @@ namespace GestionInventario.src.Modules.Movements.Domains.Models
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
         public MovementType Type { get; set; }
+        public MovementCategory CategoryMov { get; set; }
         public int Amount { get; set; }
         public required string Reason { get; set; }
         //reference to the product

@@ -5,6 +5,6 @@ namespace GestionInventario.src.Modules.Inventories.Domains.Models
 {
     public class Inventary
     {
-        public Dictionary<Guid, MovementDto> Movements { get; set; } = [];
+        public Dictionary<Guid, MovementRequest> Movements { get; set; } = [];
     }
 }

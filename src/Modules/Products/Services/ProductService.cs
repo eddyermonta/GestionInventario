@@ -1,6 +1,11 @@
 using AutoMapper;
+using GestionInventario.src.Data;
 using GestionInventario.src.Modules.Categories.Domain.Models;
 using GestionInventario.src.Modules.Categories.Repositories;
+using GestionInventario.src.Modules.Movements.Domains.DTOs;
+using GestionInventario.src.Modules.Movements.Domains.Models;
+using GestionInventario.src.Modules.Movements.Domains.Models.Enum;
+using GestionInventario.src.Modules.Movements.Repositories;
 using GestionInventario.src.Modules.ProductCategories.Domain.Model;
 using GestionInventario.src.Modules.ProductCategories.Repositories;
 using GestionInventario.src.Modules.Products.Domain.DTOs;
@@ -13,33 +18,62 @@ namespace GestionInventario.src.Modules.Products.Services
         IProductRepository productRepository,
         IProductCategoryRepository productCategoryRepository,
         ICategoryRepository categoryRepository,
-        IMapper mapper
+        IMovementRepository movementRepository,
+        IMapper mapper,
+        MyDbContext context
          ) : IProductService
     {
         private readonly IProductRepository _productRepository = productRepository;
         private readonly IProductCategoryRepository _productCategoryRepository = productCategoryRepository;
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
+        private readonly IMovementRepository _movementRepository = movementRepository;
         private readonly IMapper _mapper = mapper;
+        private readonly MyDbContext _context = context;
 
         public ProductRequestDto AddProduct(ProductRequest productRequest, Guid supplierId)
         {
-            //si el producto ya existe, lanza una excepción
-            if (_productRepository.GetProductByName(productRequest.Name) != null) throw new InvalidOperationException("El producto ya existe.");
-            
-            var product = _mapper.Map<Product>(productRequest);
-            product.SupplierId = supplierId;
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                if (_productRepository.GetProductByName(productRequest.Name) != null) return null;
+                
+                var product = _mapper.Map<Product>(productRequest);
+                product.SupplierId = supplierId;
 
-            _productRepository.CreateProduct(product);
-            
-            return _mapper.Map<ProductRequestDto>(product);
+                _productRepository.CreateProduct(product);
+                AddMovementReason(product, "Creación de producto");
+
+                transaction.Commit();
+                
+                return _mapper.Map<ProductRequestDto>(product);
+
+            }catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+           
         }
 
         public bool DeleteProduct(string name)
         {
-            var existingProduct = _productRepository.GetProductByName(name);
-            if (existingProduct == null) return false;
-           _productRepository.DeleteProduct(existingProduct);
-           return true;
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var existingProduct = _productRepository.GetProductByName(name);
+                if (existingProduct == null) return false;
+                _productRepository.DeleteProduct(existingProduct);
+                AddMovementReason(existingProduct, "Eliminación de producto");
+                transaction.Commit();
+                return true;
+
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+            
         }
 
         public ProductResponse? GetProductByName(string name)
@@ -57,13 +91,25 @@ namespace GestionInventario.src.Modules.Products.Services
 
         public bool UpdateProduct(ProductUpdateDto productUpdateDto, string name)
         {
-            var existingProduct = _productRepository.GetProductByName(name);
-            if (existingProduct == null) return false;
+            using var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var existingProduct = _productRepository.GetProductByName(name);
+                if (existingProduct == null) return false;
 
-            _mapper.Map(productUpdateDto, existingProduct);
-            UpdateProductCategories(existingProduct, productUpdateDto.CategoryNames);
-            _productRepository.UpdateProduct(existingProduct);
-            return true;
+                _mapper.Map(productUpdateDto, existingProduct);
+                UpdateProductCategories(existingProduct, productUpdateDto.CategoryNames);
+                _productRepository.UpdateProduct(existingProduct);
+                AddMovementReason(existingProduct, "Actualización de producto");
+                transaction.Commit();
+                return true;
+
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }    
         }
 
         private void UpdateProductCategories(Product existingProduct, List<string> newCategoryNames)
@@ -97,6 +143,22 @@ namespace GestionInventario.src.Modules.Products.Services
                     existingProduct.ProductCategories.Add(new ProductCategory { Category = newCategory, Product = existingProduct });
                 }
             }
+        }
+
+        private void AddMovementReason(Product product, string reason)
+        {
+             var Movementresponse = new MovementResponse(){
+                Date = DateTime.UtcNow,
+                CategoryMov = MovementCategory.entrada,
+                Amount = product.Amount,
+                Reason = reason,
+                ProductName = product.Name
+            };
+
+            var movement = _mapper.Map<Movement>(Movementresponse);
+            movement.ProductId = product.Id;
+            movement.Product = product;
+            _movementRepository.Add(movement);     
         }
 
     }

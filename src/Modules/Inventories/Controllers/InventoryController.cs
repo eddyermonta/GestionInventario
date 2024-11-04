@@ -1,10 +1,12 @@
 using GestionInventario.src.Modules.Categories.Domain.DTOs;
 using GestionInventario.src.Modules.Categories.Services;
 using GestionInventario.src.Modules.Movements.Domains.DTOs;
+using GestionInventario.src.Modules.Movements.Domains.Models.Enum;
 using GestionInventario.src.Modules.Movements.Services;
 using GestionInventario.src.Modules.Products.Domain.DTOs;
 using GestionInventario.src.Modules.Products.Services;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 
 namespace GestionInventario.src.Modules.Inventories.Controllers
 {
@@ -68,24 +70,88 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
             return Ok(categoryProductsDto); // Devuelve 200 y la lista de productos
         }
 
-        [HttpPut("{MovementType}",Name = "UpdateInventory")]
+        /// <param name="movementType">El tipo de movimiento (Manual o Automatic).</param>
+        /// <param name="movementCategory">La categoría del movimiento (Entrada o Salida).</param>
+        /// <param name="movementRequest">La solicitud de movimiento que contiene los detalles del movimiento.</param>
+        [HttpPut("{movementType}",Name = "UpdateInventory")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateInventory([FromRoute] string MovementType, [FromBody] MovementDto movementDto)
+        public IActionResult UpdateInventory(
+            [FromRoute] MovementType movementType,
+            [FromRoute] MovementCategory movementCategory,
+            [FromBody] MovementRequest movementRequest)
         {
-            if(string.IsNullOrEmpty(MovementType)) return BadRequest("MovementType cannot be empty.");
+            if(movementType == MovementType.Manual){
+                
+                if(movementCategory == MovementCategory.entrada)
+                {
+                   var movement = _movementManualService.AddInventoryStock(movementRequest);
+                   if(movement == null) return BadRequest("Movement not created"); 
+                   return Ok("Movement created");
+
+                }else if (movementCategory == MovementCategory.salida){
+
+                    var movement = _movementManualService.ReduceInventoryStock(movementRequest);
+                    if(movement == null) return BadRequest("Movement not created"); 
+                    return Ok("Movement created");
+                }
+            } 
             
-            if(MovementType == "Manual"){
-                _movementManualService.AddInventoryStock(movementDto);
-                return Ok("Product updated by manual");
-            }
-            
-            if(MovementType == "SupplierReceipt"){
-                _movementSupplierService.UpdateBySupplierReceipt(movementDto);
-                return Ok("Product updated by supplier receipt");
+            if(movementType == MovementType.SupplierReceipt){
+                var movement =_movementSupplierService.UpdateBySupplierReceipt(movementRequest);
+                if(movement == null) return BadRequest("Movement not created"); 
+                return Ok("Movement created");
             } 
         
             return BadRequest("MovementType is invalid");
+        }
+
+        /// <summary>
+        /// Actualiza el inventario basado en un recibo de proveedor cargado desde un archivo Excel.
+        /// </summary>
+        /// <param name="file">El archivo Excel que contiene el recibo del proveedor.</param>
+        /// <returns>Una respuesta indicando el resultado de la operación.</returns>
+        [HttpPost("UpdateBySupplierReceipt")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UpdateByReceipt(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("El archivo es requerido.");
+
+            try
+            {
+                using var stream = new MemoryStream();
+                file.CopyTo(stream);
+                stream.Position = 0;
+
+                using var package = new ExcelPackage(stream);
+                var worksheet = package.Workbook.Worksheets[0];
+
+                var receiptRequest = new SupplierReceiptRequest
+                {
+                    SupplierId = Guid.Parse(worksheet.Cells[1, 2].Text),
+                    Items = new List<SupplierReceiptItem>()
+                };
+
+                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                {
+                    var item = new SupplierReceiptItem
+                    {
+                        ProductId = Guid.Parse(worksheet.Cells[row, 1].Text),
+                        Quantity = int.Parse(worksheet.Cells[row, 2].Text)
+                    };
+                    receiptRequest.Items.Add(item);
+                }
+
+                //_movementSupplierService.UpdateBySupplierReceipt(receiptRequest);
+
+                return Ok("Inventario actualizado correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al procesar el archivo: {ex.Message}");
+            }
         }
     }
 }

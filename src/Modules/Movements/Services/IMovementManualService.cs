@@ -4,7 +4,7 @@ namespace GestionInventario.src.Modules.Movements.Services
 {
     public interface IMovementManualService
     {
-        void AddInventoryStock(MovementDto movementDto);
-        void ReduceInventoryStock(MovementDto movementDto);
+        MovementResponse? AddInventoryStock (MovementRequest movementRequest);
+        MovementResponse? ReduceInventoryStock (MovementRequest movementRequest);
     }
 }

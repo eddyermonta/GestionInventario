@@ -1,4 +1,5 @@
 
+using System.Reflection;
 using AutoMapper;
 using GestionInventario.src.Core.AutoMapperPrf;
 using GestionInventario.src.Data;
@@ -6,7 +7,7 @@ using GestionInventario.src.Modules.Auths.Repositories;
 using GestionInventario.src.Modules.Auths.Services;
 using GestionInventario.src.Modules.Categories.Repositories;
 using GestionInventario.src.Modules.Categories.Services;
-using GestionInventario.src.Modules.Inventories.Services;
+using GestionInventario.src.Modules.Movements.Repositories;
 using GestionInventario.src.Modules.Movements.Services;
 using GestionInventario.src.Modules.ProductCategories.Repositories;
 using GestionInventario.src.Modules.ProductCategories.Services;
@@ -19,6 +20,8 @@ using GestionInventario.src.Modules.Users.Repositories;
 using GestionInventario.src.Modules.Users.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +52,7 @@ builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IMovementManualService, MovementManualService>();
 builder.Services.AddScoped<IMovementSupplierService, MovementSupplierService>();
-builder.Services.AddScoped<IInventaryService , InventaryService>();
+
 
 // Add repositories to the container
 builder.Services.AddScoped<IUserRepository, UserRepositoryBD>();
@@ -58,6 +61,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+builder.Services.AddScoped<IMovementRepository, MovementRepository>();
 
 
 builder.Services.AddDbContext<MyDbContext> (options => 
@@ -69,9 +73,17 @@ builder.Services.AddRouting(Options => Options.LowercaseUrls = true);
 
 // Configure Swagger/OpenAPI for the application.
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+        // Configurar Swagger para usar comentarios XML
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        c.IncludeXmlComments(xmlPath);
+    });
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>{
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+{
     options.SignIn.RequireConfirmedAccount = false;
 }).AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<MyDbContext>()
@@ -81,26 +93,16 @@ builder.Configuration.AddJsonFile("Properties/appsettings.BDD.json", optional: t
 
 var app = builder.Build();
 
-/*using (var scope = app.Services.CreateScope())
-{
-    var inventaryService = scope.ServiceProvider.GetRequiredService<IInventaryService>();
-    inventaryService.FillInventary();
-}
-*/
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("BDD"))
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+     app.UseDeveloperExceptionPage();
+     app.UseSwagger();
+     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
 }
 
 app.UseCors("*");
-
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 // Run the application asynchronously

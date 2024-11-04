@@ -4,7 +4,7 @@ namespace GestionInventario.src.Modules.Movements.Services
 {
     public class MovementSupplierService : IMovementSupplierService
     {
-        public void UpdateBySupplierReceipt(MovementDto movementDto)
+        public MovementResponse UpdateBySupplierReceipt(MovementRequest movementRequest)
         {
             throw new NotImplementedException();
         }
