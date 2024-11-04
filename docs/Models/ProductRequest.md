@@ -7,7 +7,7 @@
 | **description** | **String** |  | [default to null] |
 | **amount** | **Integer** |  | [default to null] |
 | **unitPrice** | **Double** |  | [default to null] |
-| **expirationDate** | **String** |  | [default to null] |
+| **expirationDate** | **String** |  | [optional] [default to null] |
 | **weight** | [**Mesurement**](Mesurement.md) |  | [default to null] |
 | **categories** | **List** |  | [optional] [default to null] |
 

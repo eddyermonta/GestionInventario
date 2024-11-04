@@ -1,19 +1,19 @@
-# ProductApi
+# CategoryApi
 
 All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**addProduct**](ProductApi.md#addProduct) | **POST** /api/product/{NIT} |  |
-| [**deleteProduct**](ProductApi.md#deleteProduct) | **DELETE** /api/product/{name} |  |
-| [**getAllProducts**](ProductApi.md#getAllProducts) | **GET** /api/product |  |
-| [**getProductByName**](ProductApi.md#getProductByName) | **GET** /api/product/{name} |  |
-| [**updateProduct**](ProductApi.md#updateProduct) | **PUT** /api/product/{name} |  |
+| [**addCategories**](CategoryApi.md#addCategories) | **POST** /api/category |  |
+| [**deleteCategory**](CategoryApi.md#deleteCategory) | **DELETE** /api/category/{name} |  |
+| [**getAllCategories**](CategoryApi.md#getAllCategories) | **GET** /api/category |  |
+| [**getCategoryByName**](CategoryApi.md#getCategoryByName) | **GET** /api/category/{nameCategory} |  |
+| [**updateCategory**](CategoryApi.md#updateCategory) | **PUT** /api/category/{name} |  |
 
 
-<a name="addProduct"></a>
-# **addProduct**
-> ProductResponse addProduct(NIT, ProductRequest)
+<a name="addCategories"></a>
+# **addCategories**
+> CategoryDto addCategories(CategoryRequest)
 
 
 
@@ -21,12 +21,11 @@ All URIs are relative to *http://localhost*
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **NIT** | **String**|  | [default to null] |
-| **ProductRequest** | [**ProductRequest**](../Models/ProductRequest.md)|  | [optional] |
+| **CategoryRequest** | [**CategoryRequest**](../Models/CategoryRequest.md)|  | [optional] |
 
 ### Return type
 
-[**ProductResponse**](../Models/ProductResponse.md)
+[**CategoryDto**](../Models/CategoryDto.md)
 
 ### Authorization
 
@@ -37,9 +36,9 @@ No authorization required
 - **Content-Type**: application/json, text/json, application/*+json
 - **Accept**: text/plain, application/json, text/json
 
-<a name="deleteProduct"></a>
-# **deleteProduct**
-> deleteProduct(name)
+<a name="deleteCategory"></a>
+# **deleteCategory**
+> deleteCategory(name)
 
 
 
@@ -62,9 +61,9 @@ No authorization required
 - **Content-Type**: Not defined
 - **Accept**: text/plain, application/json, text/json
 
-<a name="getAllProducts"></a>
-# **getAllProducts**
-> List getAllProducts()
+<a name="getAllCategories"></a>
+# **getAllCategories**
+> List getAllCategories()
 
 
 
@@ -73,7 +72,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**List**](../Models/ProductResponse.md)
+[**List**](../Models/CategoryDto.md)
 
 ### Authorization
 
@@ -84,9 +83,9 @@ No authorization required
 - **Content-Type**: Not defined
 - **Accept**: text/plain, application/json, text/json
 
-<a name="getProductByName"></a>
-# **getProductByName**
-> ProductResponse getProductByName(name)
+<a name="getCategoryByName"></a>
+# **getCategoryByName**
+> CategoryDto getCategoryByName(nameCategory)
 
 
 
@@ -94,11 +93,11 @@ No authorization required
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **name** | **String**|  | [default to null] |
+| **nameCategory** | **String**|  | [default to null] |
 
 ### Return type
 
-[**ProductResponse**](../Models/ProductResponse.md)
+[**CategoryDto**](../Models/CategoryDto.md)
 
 ### Authorization
 
@@ -109,9 +108,9 @@ No authorization required
 - **Content-Type**: Not defined
 - **Accept**: text/plain, application/json, text/json
 
-<a name="updateProduct"></a>
-# **updateProduct**
-> updateProduct(name, ProductUpdateDto)
+<a name="updateCategory"></a>
+# **updateCategory**
+> updateCategory(name, CategoryDto)
 
 
 
@@ -120,7 +119,7 @@ No authorization required
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
 | **name** | **String**|  | [default to null] |
-| **ProductUpdateDto** | [**ProductUpdateDto**](../Models/ProductUpdateDto.md)|  | [optional] |
+| **CategoryDto** | [**CategoryDto**](../Models/CategoryDto.md)|  | [optional] |
 
 ### Return type
 

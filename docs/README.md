@@ -1,4 +1,4 @@
-# Documentation for GestionInventario
+# Documentation for My API
 
 <a name="documentation-for-api-endpoints"></a>
 ## Documentation for API Endpoints
@@ -11,12 +11,15 @@ All URIs are relative to *http://localhost*
 | *CategoryApi* | [**addCategories**](Apis/CategoryApi.md#addcategories) | **POST** /api/category |  |
 *CategoryApi* | [**deleteCategory**](Apis/CategoryApi.md#deletecategory) | **DELETE** /api/category/{name} |  |
 *CategoryApi* | [**getAllCategories**](Apis/CategoryApi.md#getallcategories) | **GET** /api/category |  |
-*CategoryApi* | [**getCategoryByName**](Apis/CategoryApi.md#getcategorybyname) | **GET** /api/category/{name} |  |
+*CategoryApi* | [**getCategoryByName**](Apis/CategoryApi.md#getcategorybyname) | **GET** /api/category/{nameCategory} |  |
 *CategoryApi* | [**updateCategory**](Apis/CategoryApi.md#updatecategory) | **PUT** /api/category/{name} |  |
+| *InventoryApi* | [**apiInventoryUpdatebysupplierreceiptPost**](Apis/InventoryApi.md#apiinventoryupdatebysupplierreceiptpost) | **POST** /api/inventory/updatebysupplierreceipt | Actualiza el inventario basado en un recibo de proveedor cargado desde un archivo Excel. |
+*InventoryApi* | [**getAllProducts**](Apis/InventoryApi.md#getallproducts) | **GET** /api/inventory |  |
+*InventoryApi* | [**getProductByName**](Apis/InventoryApi.md#getproductbyname) | **GET** /api/inventory/product/{name} |  |
+*InventoryApi* | [**getProductsByCategoryName**](Apis/InventoryApi.md#getproductsbycategoryname) | **GET** /api/inventory/{categoryName} |  |
+*InventoryApi* | [**updateInventory**](Apis/InventoryApi.md#updateinventory) | **PUT** /api/inventory/{movementType} |  |
 | *ProductApi* | [**addProduct**](Apis/ProductApi.md#addproduct) | **POST** /api/product/{NIT} |  |
 *ProductApi* | [**deleteProduct**](Apis/ProductApi.md#deleteproduct) | **DELETE** /api/product/{name} |  |
-*ProductApi* | [**getAllProducts**](Apis/ProductApi.md#getallproducts) | **GET** /api/product |  |
-*ProductApi* | [**getProductByName**](Apis/ProductApi.md#getproductbyname) | **GET** /api/product/{name} |  |
 *ProductApi* | [**updateProduct**](Apis/ProductApi.md#updateproduct) | **PUT** /api/product/{name} |  |
 | *SupplierApi* | [**addSupplier**](Apis/SupplierApi.md#addsupplier) | **POST** /api/supplier |  |
 *SupplierApi* | [**deleteSupplier**](Apis/SupplierApi.md#deletesupplier) | **DELETE** /api/supplier/{NIT} |  |
@@ -38,9 +41,13 @@ All URIs are relative to *http://localhost*
  - [AuthRequest](./Models/AuthRequest.md)
  - [AuthResponse](./Models/AuthResponse.md)
  - [CategoryDto](./Models/CategoryDto.md)
+ - [CategoryProductsDto](./Models/CategoryProductsDto.md)
  - [CategoryRequest](./Models/CategoryRequest.md)
  - [DocumentType](./Models/DocumentType.md)
  - [Mesurement](./Models/Mesurement.md)
+ - [MovementCategory](./Models/MovementCategory.md)
+ - [MovementRequest](./Models/MovementRequest.md)
+ - [MovementType](./Models/MovementType.md)
  - [ProblemDetails](./Models/ProblemDetails.md)
  - [ProductRequest](./Models/ProductRequest.md)
  - [ProductResponse](./Models/ProductResponse.md)
