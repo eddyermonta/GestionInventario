@@ -8,7 +8,7 @@ namespace GestionInventario.src.Modules.Categories.Services
         bool DeleteCategory(string name);
         IEnumerable<CategoryDto> GetAllCategories();
         CategoryResponse? GetCategoryByName(string name);
-        CategoryProductsDto GetProductByName(string categoryName);
+        CategoryProductsResponse? GetProductsByCategoryName(string categoryName);
         bool UpdateCategory(CategoryDto categoryDto, string name);
     }
 }

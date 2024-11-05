@@ -53,16 +53,16 @@ namespace GestionInventario.src.Modules.Categories.Services
             return _mapper.Map<CategoryResponse>(category);
         }
 
-        public CategoryProductsDto GetProductByName(string categoryName)
+        public CategoryProductsResponse? GetProductsByCategoryName(string categoryName)
         {
             var category = _categoryRepository.GetProductsByCategoryName(categoryName);
-            if (category == null) return new CategoryProductsDto { Products = [] };
+            if (category == null) return new CategoryProductsResponse { Products = [] };
             
             var products = category
             .Select(_mapper.Map<ProductResponse>)
             .ToList();
             
-            return new CategoryProductsDto
+            return new CategoryProductsResponse
             {
                 Products = products
             };

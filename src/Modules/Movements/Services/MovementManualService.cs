@@ -19,12 +19,8 @@ namespace GestionInventario.src.Modules.Movements.Services
         private readonly IProductRepository _productRepository = productRepository;
         private readonly IMovementRepository _movementRepository = movementRepository;
         protected readonly IMapper _mapper = mapper;
-        private readonly MyDbContext _context = context;
         public MovementResponse? AddInventoryStock(MovementRequest movementRequest)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
                 var product = _productRepository.GetProductByName(movementRequest.ProductName);
                 if (product == null) return null;
             
@@ -33,20 +29,11 @@ namespace GestionInventario.src.Modules.Movements.Services
                 var movementResponse = AddMovement(product, movementRequest);
 
              return movementResponse;
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
         }
             
 
         public MovementResponse? ReduceInventoryStock(MovementRequest movementRequest)
         {
-            using var transaction = _context.Database.BeginTransaction();
-            try
-            {
                 var product = _productRepository.GetProductByName(movementRequest.ProductName);
                 if (product == null) return null;
            
@@ -55,15 +42,7 @@ namespace GestionInventario.src.Modules.Movements.Services
                 _productRepository.UpdateProduct(product); // actualiza la cantidad de productos
                 var movementResponse = AddMovement(product, movementRequest);  
 
-                transaction.Commit();
-                return movementResponse;  
-
-            }catch
-            {
-                transaction.Rollback();
-                throw;
-            }
-            
+                return movementResponse;     
         }
 
         private static MovementResponse ProductToMovementResponse(Product product, MovementRequest movementRequest)
@@ -74,7 +53,6 @@ namespace GestionInventario.src.Modules.Movements.Services
                 Amount = product.Amount,
                 Reason = movementRequest.Reason,
                 ProductName = product.Name,
-                CategoryMov = movementRequest.CategoryMov
             };
         }
 
