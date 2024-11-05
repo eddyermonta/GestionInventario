@@ -95,19 +95,19 @@ public class UserController(IUserService userService) : ControllerBase
     }
 
     /// <summary>
-    ///  Deletes a user by their email address.
+    ///  update a user by their email address.
     /// </summary>
     /// <param name="user">
-    ///  User to delete from the system.
+    ///  User to update from the system.
     ///  </param>
     /// <param name="email">
-    /// The email address of the user to delete.
+    /// The email address of the user to update.
     ///  </param>
     /// <returns>
     ///  Returns an <see cref="IActionResult"/> containing the user data if deleted successfully,
     /// otherwise returns a 404 Not Found status if the user does not exist.
     /// </returns>
-    /// <response code="204">User deleted successfully.</response>
+    /// <response code="204">User updated successfully.</response>
     /// <response code="404">If the user is not found.</response>
     /// <response code="400">If the email address is not valid.</response>
 

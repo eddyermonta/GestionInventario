@@ -5,7 +5,7 @@ namespace GestionInventario.src.Modules.Users.Domains.DTOS
 {
     public class AddressUpdateRequest
     {
-        [RegularExpression(@"^\d{7,}$", ErrorMessage = "El código postal debe tener al menos 7 dígitos.")]
+        [RegularExpression(@"^\d{6,}$", ErrorMessage = "El código postal debe tener al menos 7 dígitos.")]
         public int? ZipCode { get; set; }
 
         [StringLength(50, ErrorMessage = "La calle debe tener un máximo de 50 caracteres.")]

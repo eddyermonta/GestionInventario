@@ -5,7 +5,7 @@ namespace GestionInventario.src.Modules.Users.Domains.DTOS
 {
     public class UserUpdateRequest
     {
-    [StringLength(30, MinimumLength = 5, ErrorMessage = "The name must be between 5 and 30 characters")]
+    [StringLength(30, ErrorMessage = "The name must be between 5 and 30 characters")]
     [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "The name can only contain letters and spaces")]
     public string? Name { get; set; }
 
@@ -20,8 +20,7 @@ namespace GestionInventario.src.Modules.Users.Domains.DTOS
     [StringLength(15, ErrorMessage = "The phone number must be lower than 15 characters")]
     [RegularExpression(@"^\d+$", ErrorMessage = "The phone number must only contain digits")]
     public string? PhoneNumber { get; set; }
-    [Required (ErrorMessage = "The IsActive field is required")]
-    public required bool IsActive { get; set; }
+    public required bool IsActive { get; set; } //controlar que no se falsee
 
     [StringLength(100, MinimumLength = 8, ErrorMessage = "The password must be at least 8 characters long.")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",

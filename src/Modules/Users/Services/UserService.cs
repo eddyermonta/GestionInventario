@@ -38,9 +38,11 @@ namespace GestionInventario.src.Modules.Users.Services
             var existingUser = _userRepository.GetUserByEmail(email);
             if (existingUser == null) return false; // Indicate failure
             
+
             var userUpdated = _mapper.Map(userUpdateRequest, existingUser);
             
-            if (!string.IsNullOrEmpty(userUpdateRequest.Password)) existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userUpdateRequest.Password);
+            if (!string.IsNullOrEmpty(userUpdateRequest.Password)) 
+            existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userUpdateRequest.Password);     
             
             _userRepository.UpdateUser(userUpdated);
             return true;

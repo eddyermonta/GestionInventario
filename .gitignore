@@ -52,3 +52,4 @@ Properties/
 
 src/Proveedores/*
 src/ConsultaInventario/*
+.fake
