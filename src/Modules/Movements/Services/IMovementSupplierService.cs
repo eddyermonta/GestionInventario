@@ -4,6 +4,6 @@ namespace GestionInventario.src.Modules.Movements.Services
 {
     public interface IMovementSupplierService
     {
-        MovementResponse UpdateBySupplierReceipt(MovementRequest movementRequest);
+        void UpdateBySupplierReceipt(IFormFile formFile);
     }
 }

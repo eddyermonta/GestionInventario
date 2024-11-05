@@ -6,7 +6,6 @@ using GestionInventario.src.Modules.Movements.Services;
 using GestionInventario.src.Modules.Products.Domain.DTOs;
 using GestionInventario.src.Modules.Products.Services;
 using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
 
 namespace GestionInventario.src.Modules.Inventories.Controllers
 {
@@ -135,53 +134,28 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
                 return Ok("Movement created");
         } 
             
-       /// <summary>
-       ///  Updates the inventory of products by supplier receipt.
-       /// </summary>
-       /// <param name="file">
-       ///  The Excel file with the supplier receipt information.
-       /// </param>
-       /// <returns>
-       /// Successful update: 200 OK and a success message.
-       /// </returns>
-       /// <response code="400">The file is required.</response>
-       /// <response code="200">Successful update: 200 OK and a success message.</response>
-       
-        [HttpPut("supplier-receipt", Name = "UpdateBySupplierReceipt")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        /// <summary>
+        ///  Updates the inventory of products by supplier receipt.
+        /// </summary>
+        /// <param name="supplierReceipt">
+        ///  The Excel file with the supplier receipt information.
+        /// </param>
+        /// <returns>
+        /// Successful update: 200 OK and a success message.
+        /// </returns>
+        /// <response code="400">The file is required.</response>
+        /// <response code="200">Successful update: 200 OK and a success message.</response>
+        [HttpPut("supplierReceipt", Name = "UpdateBySupplierReceipt")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateByReceipt(IFormFile file)
+        public IActionResult UpdateByReceipt(IFormFile supplierReceipt)
         {
-            if (file == null || file.Length == 0)
+            if (supplierReceipt == null || supplierReceipt.Length == 0)
                 return BadRequest("El archivo es requerido.");
 
             try
             {
-                using var stream = new MemoryStream();
-                file.CopyTo(stream);
-                stream.Position = 0;
-
-                using var package = new ExcelPackage(stream);
-                var worksheet = package.Workbook.Worksheets[0];
-
-                var receiptRequest = new SupplierReceiptRequest
-                {
-                    SupplierId = Guid.Parse(worksheet.Cells[1, 2].Text),
-                    Items = new List<SupplierReceiptItem>()
-                };
-
-                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
-                {
-                    var item = new SupplierReceiptItem
-                    {
-                        ProductId = Guid.Parse(worksheet.Cells[row, 1].Text),
-                        Quantity = int.Parse(worksheet.Cells[row, 2].Text)
-                    };
-                    receiptRequest.Items.Add(item);
-                }
-
-                //_movementSupplierService.UpdateBySupplierReceipt(receiptRequest);
-
+                _movementSupplierService.UpdateBySupplierReceipt(supplierReceipt);
                 return Ok("Inventario actualizado correctamente.");
             }
             catch (Exception ex)
@@ -189,5 +163,7 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
                 return BadRequest($"Error al procesar el archivo: {ex.Message}");
             }
         }
+        
+        
     }
 }

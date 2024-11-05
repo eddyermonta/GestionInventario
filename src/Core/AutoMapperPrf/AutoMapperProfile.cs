@@ -91,38 +91,7 @@ namespace GestionInventario.src.Core.AutoMapperPrf
             CreateMap<Supplier, SupplierResponse>().ReverseMap();
 
             CreateMap<SupplierUpdateDto, Supplier>()
-                .ForMember(dest => dest.Name, opt =>
-                {
-                    opt.PreCondition(src => !string.IsNullOrEmpty(src.Name));
-                    opt.MapFrom(src => src.Name);
-                })
-                .ForMember(dest => dest.Phone, opt =>
-                {
-                    opt.PreCondition(src => !string.IsNullOrEmpty(src.Phone));
-                    opt.MapFrom(src => src.Phone);
-                })
-                .ForMember(dest => dest.Email, opt =>
-                {
-                    opt.PreCondition(src => !string.IsNullOrEmpty(src.Email));
-                    opt.MapFrom(src => src.Email);
-                })
-                .ForMember(dest => dest.Address, opt =>
-                {
-                    opt.PreCondition(src => src.Address != null &&
-                        (!string.IsNullOrEmpty(src.Address.Street) ||
-                        !string.IsNullOrEmpty(src.Address.City) ||
-                        !string.IsNullOrEmpty(src.Address.State) ||
-                        !string.IsNullOrEmpty(src.Address.Country) ||
-                        src.Address.ZipCode != 0));
-                    opt.MapFrom(src => src.Address != null ? new AddressUpdateRequest
-                    {
-                        ZipCode = src.Address.ZipCode ?? 0,
-                        City = src.Address.City ?? string.Empty,
-                        Country = src.Address.Country ?? string.Empty,
-                        State = src.Address.State ?? string.Empty,
-                        Street = src.Address.Street ?? string.Empty
-                    } : new AddressUpdateRequest());
-                });
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
         }
 
         private void CreateUserMaps()

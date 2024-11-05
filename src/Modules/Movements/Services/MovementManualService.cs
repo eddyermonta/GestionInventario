@@ -12,8 +12,7 @@ namespace GestionInventario.src.Modules.Movements.Services
        (
         IProductRepository productRepository,
         IMovementRepository movementRepository,
-        IMapper mapper,
-        MyDbContext context
+        IMapper mapper
        ) : IMovementManualService
        {
         private readonly IProductRepository _productRepository = productRepository;
