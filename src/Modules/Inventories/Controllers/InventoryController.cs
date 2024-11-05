@@ -147,7 +147,7 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
        /// <response code="400">The file is required.</response>
        /// <response code="200">Successful update: 200 OK and a success message.</response>
        
-        [HttpPut("{file}",Name = "UpdateBySupplierReceipt")]
+        [HttpPut("supplier-receipt", Name = "UpdateBySupplierReceipt")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult UpdateByReceipt(IFormFile file)

@@ -81,7 +81,7 @@ namespace GestionInventario.src.Core.AutoMapperPrf
 
         private void CreateCategoryMaps()
         {
-            CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<Category, CategoryResponseName>().ReverseMap();
             CreateMap<Category, CategoryResponse>().ReverseMap();
         }
 

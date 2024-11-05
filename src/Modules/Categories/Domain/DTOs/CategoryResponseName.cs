@@ -1,6 +1,6 @@
 namespace GestionInventario.src.Modules.Categories.Domain.DTOs
 {
-    public class CategoryDto
+    public class CategoryResponseName
     {
         public required string Name { get; set; }
     }

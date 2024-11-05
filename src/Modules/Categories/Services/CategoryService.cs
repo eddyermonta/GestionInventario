@@ -10,9 +10,9 @@ namespace GestionInventario.src.Modules.Categories.Services
     {
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
         private readonly IMapper _mapper = mapper;
-        public (List<CategoryDto> AddedCategories, List<string> ExistingCategories) AddCategories(List<string> namesCategories)
+        public (List<CategoryResponseName> AddedCategories, List<string> ExistingCategories) AddCategories(List<string> namesCategories)
         {
-            var addedCategories = new List<CategoryDto>();
+            var addedCategories = new List<CategoryResponseName>();
             var existingCategories = new List<string>();
 
             foreach(var name in namesCategories)
@@ -26,7 +26,7 @@ namespace GestionInventario.src.Modules.Categories.Services
 
                 var category = new Category { Name = name };
                 _categoryRepository.CreateCategory(category);
-                addedCategories.Add(_mapper.Map<CategoryDto>(category));
+                addedCategories.Add(_mapper.Map<CategoryResponseName>(category));
             }
 
             return (addedCategories, existingCategories);
@@ -40,10 +40,10 @@ namespace GestionInventario.src.Modules.Categories.Services
             return true;
         }
 
-        public IEnumerable<CategoryDto> GetAllCategories()
+        public IEnumerable<CategoryResponseName> GetAllCategories()
         {
             var categories = _categoryRepository.GetAllCategories();
-            return _mapper.Map<IEnumerable<CategoryDto>>(categories);
+            return _mapper.Map<IEnumerable<CategoryResponseName>>(categories);
         }
 
         public CategoryResponse? GetCategoryByName(string name)
@@ -68,11 +68,11 @@ namespace GestionInventario.src.Modules.Categories.Services
             };
         }
 
-        public bool UpdateCategory(CategoryDto categoryDto, string name)
+        public bool UpdateCategory(CategoryResponseName categoryResponseName, string name)
         {
             var existingCategory = _categoryRepository.GetCategoryByName(name);
             if (existingCategory == null) return false;
-            _mapper.Map(categoryDto, existingCategory);
+            _mapper.Map(categoryResponseName, existingCategory);
             _categoryRepository.UpdateCategory(existingCategory);
             return true;
         }
