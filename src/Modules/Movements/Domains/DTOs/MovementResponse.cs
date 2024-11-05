@@ -1,13 +1,14 @@
 using GestionInventario.src.Modules.Movements.Domains.Models.Enum;
+using GestionInventario.src.Modules.Products.Domain.Models;
 
 namespace GestionInventario.src.Modules.Movements.Domains.DTOs
 {
     public class MovementResponse
     {
-        public required DateTime Date { get; set; }
-        public required int Amount { get; set; }
-        public required string Reason { get; set; }
-        public required string ProductName { get; set; }
-        public required MovementCategory CategoryMov { get; set; }
+        public DateTime Date { get; set; }
+        public int Amount { get; set; }
+        public string? Reason { get; set; }
+        public string? ProductName { get; set; }
+        public MovementCategory CategoryMov { get; set; }
     }
 }

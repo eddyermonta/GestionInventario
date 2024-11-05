@@ -4,6 +4,6 @@ namespace GestionInventario.src.Modules.ProductCategories.Services
 {
     public interface IProductCategoryService
     {
-        void AddProductCategory(ProductCategoryRequest productCategoryRequest);
+        bool AddProductCategory(ProductCategoryRequest productCategoryRequest);
     }
 }

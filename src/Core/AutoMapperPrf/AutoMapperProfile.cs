@@ -43,61 +43,35 @@ namespace GestionInventario.src.Core.AutoMapperPrf
             // Mapeo de ProductRequest a Product
             CreateMap<ProductRequest, Product>()
             .ForMember(dest => dest.ExpirationDate,
-            opt => opt.MapFrom(src => src.ExpirationDate != null ? DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default)); // Convierte string a DateOnly
+            opt => opt.MapFrom(src => src.ExpirationDate != null ? 
+            DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default)); // Convierte string a DateOnly
 
             CreateMap<Product, ProductRequest>()
             .ForMember(dest => dest.ExpirationDate,
             opt => opt.MapFrom(src => src.ExpirationDate.ToString())); // Convierte DateOnly a string
 
-            // Mapeo de ProductRequestDto a Product
-            CreateMap<Product, ProductRequestDto>()
+            // Mapeo de productResponseId a Product
+            CreateMap<Product, ProductResponseId>()
             .ForMember(dest => dest.ExpirationDate,
             opt => opt.MapFrom(src => src.ExpirationDate.ToString())); // Convierte DateOnly a string
 
-            CreateMap<ProductRequestDto, Product>()
+            CreateMap<ProductResponseId, Product>()
             .ForMember(dest => dest.ExpirationDate,
             opt => opt.MapFrom(src => src.ExpirationDate != null ? DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default)); // Convierte string a DateOnly
         
             //mapeo para product con categorias
             CreateMap<Product, ProductResponse>()
             .ForMember(dest => dest.ExpirationDate,
-            opt => opt.MapFrom(src => src.ExpirationDate.ToString()))
+                opt => opt.MapFrom(src => src.ExpirationDate.ToString()))
             .ForMember(dest => dest.Categories,
-            opt => opt.MapFrom(src => src.ProductCategories.Select(pc => pc.Category.Name).ToList()));
+                opt => opt.MapFrom(src => src.ProductCategories.Select(pc => pc.Category.Name).ToList())
+            ).ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
             
             CreateMap<ProductResponse, Product>()
             .ForMember(dest => dest.ExpirationDate,
-            opt => opt.MapFrom(src => src.ExpirationDate != null ? DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default));
-        
-            //mapeo para productUPDATE
-            CreateMap<ProductUpdateDto, Product>()
-            .ForMember(dest => dest.Name, opt =>
-            {
-                opt.PreCondition(src => !string.IsNullOrEmpty(src.Name));
-                opt.MapFrom(src => src.Name);
-            })
-            .ForMember(dest => dest.Description, opt =>
-            {
-                opt.PreCondition(src => !string.IsNullOrEmpty(src.Description));
-                opt.MapFrom(src => src.Description);
-            })
-            .ForMember(dest => dest.Amount, opt =>
-            {
-                opt.PreCondition(src => src.Amount > 0);
-                opt.MapFrom(src => src.Amount);
-            })
-            .ForMember(dest => dest.UnitPrice, opt =>
-            {
-                opt.PreCondition(src => src.UnitPrice > 0);
-                opt.MapFrom(src => src.UnitPrice);
-            })
-            .ForMember(dest => dest.ExpirationDate, opt =>
-                opt.MapFrom(src => !string.IsNullOrEmpty(src.ExpirationDate) ? DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default))
-            .ForMember(dest => dest.Weight, opt =>
-            {
-                opt.PreCondition(src => src.Weight != null);
-                opt.MapFrom(src => src.Weight);
-            });
+            opt => opt.MapFrom(src => src.ExpirationDate != null ? DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+           
         }
 
         private void CreateProductCategoryMaps()
@@ -108,13 +82,13 @@ namespace GestionInventario.src.Core.AutoMapperPrf
         private void CreateCategoryMaps()
         {
             CreateMap<Category, CategoryDto>().ReverseMap();
-            CreateMap<Category, CategoryGet>().ReverseMap();
+            CreateMap<Category, CategoryResponse>().ReverseMap();
         }
 
         private void CreateSupplierMaps()
         {
             CreateMap<Supplier, SupplierDto>().ReverseMap();
-            CreateMap<Supplier, SupplierGetElementDto>().ReverseMap();
+            CreateMap<Supplier, SupplierResponse>().ReverseMap();
 
             CreateMap<SupplierUpdateDto, Supplier>()
                 .ForMember(dest => dest.Name, opt =>
@@ -176,8 +150,6 @@ namespace GestionInventario.src.Core.AutoMapperPrf
 
             CreateMap<AddressUpdateRequest, Address>()
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
-            
-            CreateMap<Address, AddressGetElementDto>().ReverseMap();
             
         }
     }

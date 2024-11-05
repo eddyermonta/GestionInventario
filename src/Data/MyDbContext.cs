@@ -74,7 +74,7 @@ namespace GestionInventario.src.Data
             .HasMany(p => p.Movements)
             .WithOne(m => m.Product)
             .HasForeignKey(m => m.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         }
     }

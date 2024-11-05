@@ -8,10 +8,12 @@ namespace GestionInventario.src.Modules.ProductCategories.Repositories
     {
         private readonly MyDbContext _context = myDbContext;
         
-        public void CreateProductCategory(ProductCategory productCategory)
+        public bool CreateProductCategory(ProductCategory productCategory)
         {
             _context.ProductCategoriesBD.Add(productCategory);
-            _context.SaveChanges();
+            if(_context.SaveChanges()>0) return true;
+            return false;
+
         }
 
         public void Remove(ProductCategory productCategory)

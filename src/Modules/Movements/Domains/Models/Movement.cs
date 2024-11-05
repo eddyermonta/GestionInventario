@@ -14,7 +14,7 @@ namespace GestionInventario.src.Modules.Movements.Domains.Models
         public int Amount { get; set; }
         public required string Reason { get; set; }
         //reference to the product
-        public Guid ProductId { get; set; }
+        public Guid? ProductId { get; set; }
         public required Product Product { get; set; }
         
     }

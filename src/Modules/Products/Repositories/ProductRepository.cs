@@ -18,7 +18,6 @@ namespace GestionInventario.src.Modules.Products.Repositories
         public void DeleteProduct(Product product)
         {
             _context.ProductsBD.Remove(product);
-            _context.SaveChanges();
         }
 
         public Product GetProductByName(string name)

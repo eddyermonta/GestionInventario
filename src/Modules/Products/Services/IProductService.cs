@@ -5,8 +5,8 @@ namespace GestionInventario.src.Modules.Products.Services
     {
         ProductResponse? GetProductByName(string name);
         IEnumerable<ProductResponse> GetAllProducts();
-        ProductRequestDto AddProduct(ProductRequest productRequest, Guid supplierId);
-        bool UpdateProduct(ProductUpdateDto productUpdateDto, string name);
+        ProductResponseId? AddProduct(ProductRequest productRequest, Guid supplierId);
+        bool UpdateProduct(ProductResponse productResponse, string name);
         bool DeleteProduct(string name);
         
     }
