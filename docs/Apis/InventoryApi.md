@@ -4,43 +4,18 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**apiInventoryUpdatebysupplierreceiptPost**](InventoryApi.md#apiInventoryUpdatebysupplierreceiptPost) | **POST** /api/inventory/updatebysupplierreceipt | Actualiza el inventario basado en un recibo de proveedor cargado desde un archivo Excel. |
-| [**getAllProducts**](InventoryApi.md#getAllProducts) | **GET** /api/inventory |  |
-| [**getProductByName**](InventoryApi.md#getProductByName) | **GET** /api/inventory/product/{name} |  |
-| [**getProductsByCategoryName**](InventoryApi.md#getProductsByCategoryName) | **GET** /api/inventory/{categoryName} |  |
-| [**updateInventory**](InventoryApi.md#updateInventory) | **PUT** /api/inventory/{movementType} |  |
+| [**getAllProducts**](InventoryApi.md#getAllProducts) | **GET** /api/inventory | Gets all products. |
+| [**getProductByName**](InventoryApi.md#getProductByName) | **GET** /api/inventory/product/{name} | Gets a product by its name. |
+| [**getProductsByCategoryName**](InventoryApi.md#getProductsByCategoryName) | **GET** /api/inventory/{categoryName} | Gets the products of a category. |
+| [**updateBySupplierReceipt**](InventoryApi.md#updateBySupplierReceipt) | **PUT** /api/inventory/supplierreceipt | Updates the inventory of products by supplier receipt. |
+| [**updateInventory**](InventoryApi.md#updateInventory) | **PUT** /api/inventory/{movementCategory} | Updates the inventory of products. |
 
-
-<a name="apiInventoryUpdatebysupplierreceiptPost"></a>
-# **apiInventoryUpdatebysupplierreceiptPost**
-> apiInventoryUpdatebysupplierreceiptPost(file)
-
-Actualiza el inventario basado en un recibo de proveedor cargado desde un archivo Excel.
-
-### Parameters
-
-|Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **file** | **File**| El archivo Excel que contiene el recibo del proveedor. | [optional] [default to null] |
-
-### Return type
-
-null (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: multipart/form-data
-- **Accept**: text/plain, application/json, text/json
 
 <a name="getAllProducts"></a>
 # **getAllProducts**
 > List getAllProducts()
 
-
+Gets all products.
 
 ### Parameters
 This endpoint does not need any parameter.
@@ -62,13 +37,13 @@ No authorization required
 # **getProductByName**
 > ProductResponse getProductByName(name)
 
-
+Gets a product by its name.
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **name** | **String**|  | [default to null] |
+| **name** | **String**| The name of the product to search for. | [default to null] |
 
 ### Return type
 
@@ -85,19 +60,19 @@ No authorization required
 
 <a name="getProductsByCategoryName"></a>
 # **getProductsByCategoryName**
-> CategoryProductsDto getProductsByCategoryName(categoryName)
+> CategoryProductsResponse getProductsByCategoryName(categoryName)
 
-
+Gets the products of a category.
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **categoryName** | **String**|  | [default to null] |
+| **categoryName** | **String**| The name of the category. | [default to null] |
 
 ### Return type
 
-[**CategoryProductsDto**](../Models/CategoryProductsDto.md)
+[**CategoryProductsResponse**](../Models/CategoryProductsResponse.md)
 
 ### Authorization
 
@@ -108,23 +83,47 @@ No authorization required
 - **Content-Type**: Not defined
 - **Accept**: text/plain, application/json, text/json
 
-<a name="updateInventory"></a>
-# **updateInventory**
-> String updateInventory(movementType, movementCategory, MovementRequest)
+<a name="updateBySupplierReceipt"></a>
+# **updateBySupplierReceipt**
+> String updateBySupplierReceipt(supplierReceipt)
 
-
+Updates the inventory of products by supplier receipt.
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **movementType** | [**MovementType**](../Models/.md)| El tipo de movimiento (Manual o Automatic). | [default to null] [enum: 0, 1] |
-| **movementCategory** | [**MovementCategory**](../Models/.md)| La categoría del movimiento (Entrada o Salida). | [default to null] [enum: 0, 1] |
-| **MovementRequest** | [**MovementRequest**](../Models/MovementRequest.md)| La solicitud de movimiento que contiene los detalles del movimiento. | [optional] |
+| **supplierReceipt** | **File**| The Excel file with the supplier receipt information. | [optional] [default to null] |
 
 ### Return type
 
 **String**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: multipart/form-data
+- **Accept**: text/plain, application/json, text/json
+
+<a name="updateInventory"></a>
+# **updateInventory**
+> MovementResponse updateInventory(movementCategory, MovementRequest)
+
+Updates the inventory of products.
+
+### Parameters
+
+|Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **movementCategory** | [**MovementCategory**](../Models/.md)| The category of the movement (entry or exit). | [default to null] [enum: 0, 1] |
+| **MovementRequest** | [**MovementRequest**](../Models/MovementRequest.md)| The information of the movement. | [optional] |
+
+### Return type
+
+[**MovementResponse**](../Models/MovementResponse.md)
 
 ### Authorization
 

@@ -4,28 +4,28 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**addCategories**](CategoryApi.md#addCategories) | **POST** /api/category |  |
-| [**deleteCategory**](CategoryApi.md#deleteCategory) | **DELETE** /api/category/{name} |  |
-| [**getAllCategories**](CategoryApi.md#getAllCategories) | **GET** /api/category |  |
-| [**getCategoryByName**](CategoryApi.md#getCategoryByName) | **GET** /api/category/{nameCategory} |  |
-| [**updateCategory**](CategoryApi.md#updateCategory) | **PUT** /api/category/{name} |  |
+| [**addCategories**](CategoryApi.md#addCategories) | **POST** /api/category | Adds a list of categories |
+| [**deleteCategory**](CategoryApi.md#deleteCategory) | **DELETE** /api/category/{name} | Elimina una categoría |
+| [**getAllCategories**](CategoryApi.md#getAllCategories) | **GET** /api/category | Gets all categories |
+| [**getCategoryByName**](CategoryApi.md#getCategoryByName) | **GET** /api/category/{nameCategory} | Gets a category by its name |
+| [**updateCategory**](CategoryApi.md#updateCategory) | **PUT** /api/category/{name} | Updates a category |
 
 
 <a name="addCategories"></a>
 # **addCategories**
-> CategoryDto addCategories(CategoryRequest)
+> CategoryResponseName addCategories(CategoryRequest)
 
-
+Adds a list of categories
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **CategoryRequest** | [**CategoryRequest**](../Models/CategoryRequest.md)|  | [optional] |
+| **CategoryRequest** | [**CategoryRequest**](../Models/CategoryRequest.md)| List of categories | [optional] |
 
 ### Return type
 
-[**CategoryDto**](../Models/CategoryDto.md)
+[**CategoryResponseName**](../Models/CategoryResponseName.md)
 
 ### Authorization
 
@@ -40,7 +40,7 @@ No authorization required
 # **deleteCategory**
 > deleteCategory(name)
 
-
+Elimina una categoría
 
 ### Parameters
 
@@ -65,14 +65,14 @@ No authorization required
 # **getAllCategories**
 > List getAllCategories()
 
-
+Gets all categories
 
 ### Parameters
 This endpoint does not need any parameter.
 
 ### Return type
 
-[**List**](../Models/CategoryDto.md)
+[**List**](../Models/CategoryResponseName.md)
 
 ### Authorization
 
@@ -85,19 +85,19 @@ No authorization required
 
 <a name="getCategoryByName"></a>
 # **getCategoryByName**
-> CategoryDto getCategoryByName(nameCategory)
+> CategoryResponseName getCategoryByName(nameCategory)
 
-
+Gets a category by its name
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **nameCategory** | **String**|  | [default to null] |
+| **nameCategory** | **String**| Name of the category | [default to null] |
 
 ### Return type
 
-[**CategoryDto**](../Models/CategoryDto.md)
+[**CategoryResponseName**](../Models/CategoryResponseName.md)
 
 ### Authorization
 
@@ -110,16 +110,16 @@ No authorization required
 
 <a name="updateCategory"></a>
 # **updateCategory**
-> updateCategory(name, CategoryDto)
+> updateCategory(name, CategoryResponseName)
 
-
+Updates a category
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **name** | **String**|  | [default to null] |
-| **CategoryDto** | [**CategoryDto**](../Models/CategoryDto.md)|  | [optional] |
+| **name** | **String**| Name of the category | [default to null] |
+| **CategoryResponseName** | [**CategoryResponseName**](../Models/CategoryResponseName.md)| Category to update | [optional] |
 
 ### Return type
 

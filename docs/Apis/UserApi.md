@@ -4,27 +4,27 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**addUser**](UserApi.md#addUser) | **POST** /api/user |  |
-| [**getAllUsers**](UserApi.md#getAllUsers) | **GET** /api/user |  |
-| [**getUserByEmail**](UserApi.md#getUserByEmail) | **GET** /api/user/{email} |  |
-| [**updateUser**](UserApi.md#updateUser) | **PUT** /api/user/{email} |  |
+| [**addUser**](UserApi.md#addUser) | **POST** /api/user | Adds a new user. |
+| [**getAllUsers**](UserApi.md#getAllUsers) | **GET** /api/user | Retrieves all users. |
+| [**getUserByEmail**](UserApi.md#getUserByEmail) | **GET** /api/user/{email} | Retrieves a user by their email address. |
+| [**updateUser**](UserApi.md#updateUser) | **PUT** /api/user/{email} | update a user by their email address. |
 
 
 <a name="addUser"></a>
 # **addUser**
-> UserDto addUser(UserDto)
+> UserResponse addUser(UserRequest)
 
-
+Adds a new user.
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **UserDto** | [**UserDto**](../Models/UserDto.md)|  | [optional] |
+| **UserRequest** | [**UserRequest**](../Models/UserRequest.md)| User to add to the system. | [optional] |
 
 ### Return type
 
-[**UserDto**](../Models/UserDto.md)
+[**UserResponse**](../Models/UserResponse.md)
 
 ### Authorization
 
@@ -39,14 +39,14 @@ No authorization required
 # **getAllUsers**
 > List getAllUsers()
 
-
+Retrieves all users.
 
 ### Parameters
 This endpoint does not need any parameter.
 
 ### Return type
 
-[**List**](../Models/UserDto.md)
+[**List**](../Models/UserResponse.md)
 
 ### Authorization
 
@@ -59,19 +59,19 @@ No authorization required
 
 <a name="getUserByEmail"></a>
 # **getUserByEmail**
-> UserDto getUserByEmail(email)
+> UserResponse getUserByEmail(email)
 
-
+Retrieves a user by their email address.
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **email** | **String**|  | [default to null] |
+| **email** | **String**| The email address of the user to retrieve. | [default to null] |
 
 ### Return type
 
-[**UserDto**](../Models/UserDto.md)
+[**UserResponse**](../Models/UserResponse.md)
 
 ### Authorization
 
@@ -84,16 +84,16 @@ No authorization required
 
 <a name="updateUser"></a>
 # **updateUser**
-> updateUser(email, UserUpdateDto)
+> updateUser(email, UserUpdateRequest)
 
-
+update a user by their email address.
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **email** | **String**|  | [default to null] |
-| **UserUpdateDto** | [**UserUpdateDto**](../Models/UserUpdateDto.md)|  | [optional] |
+| **email** | **String**| The email address of the user to update. | [default to null] |
+| **UserUpdateRequest** | [**UserUpdateRequest**](../Models/UserUpdateRequest.md)| User to update from the system. | [optional] |
 
 ### Return type
 

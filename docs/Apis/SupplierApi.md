@@ -4,24 +4,24 @@ All URIs are relative to *http://localhost*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
-| [**addSupplier**](SupplierApi.md#addSupplier) | **POST** /api/supplier |  |
-| [**deleteSupplier**](SupplierApi.md#deleteSupplier) | **DELETE** /api/supplier/{NIT} |  |
-| [**getAllSuppliers**](SupplierApi.md#getAllSuppliers) | **GET** /api/supplier |  |
-| [**getSupplierByNIT**](SupplierApi.md#getSupplierByNIT) | **GET** /api/supplier/{NIT} |  |
-| [**updateSupplier**](SupplierApi.md#updateSupplier) | **PUT** /api/supplier/{NIT} |  |
+| [**addSupplier**](SupplierApi.md#addSupplier) | **POST** /api/supplier | Adds a supplier |
+| [**deleteSupplier**](SupplierApi.md#deleteSupplier) | **DELETE** /api/supplier/{NIT} | Deletes a supplier |
+| [**getAllSuppliers**](SupplierApi.md#getAllSuppliers) | **GET** /api/supplier | Gets all suppliers |
+| [**getSupplierByNIT**](SupplierApi.md#getSupplierByNIT) | **GET** /api/supplier/{NIT} | Gets a supplier by its NIT |
+| [**updateSupplier**](SupplierApi.md#updateSupplier) | **PUT** /api/supplier/{NIT} | Updates a supplier |
 
 
 <a name="addSupplier"></a>
 # **addSupplier**
 > SupplierDto addSupplier(SupplierDto)
 
-
+Adds a supplier
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **SupplierDto** | [**SupplierDto**](../Models/SupplierDto.md)|  | [optional] |
+| **SupplierDto** | [**SupplierDto**](../Models/SupplierDto.md)| Supplier to add | [optional] |
 
 ### Return type
 
@@ -40,13 +40,13 @@ No authorization required
 # **deleteSupplier**
 > deleteSupplier(NIT)
 
-
+Deletes a supplier
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **NIT** | **String**|  | [default to null] |
+| **NIT** | **String**| The NIT of the supplier to delete. | [default to null] |
 
 ### Return type
 
@@ -65,7 +65,7 @@ No authorization required
 # **getAllSuppliers**
 > List getAllSuppliers()
 
-
+Gets all suppliers
 
 ### Parameters
 This endpoint does not need any parameter.
@@ -85,19 +85,19 @@ No authorization required
 
 <a name="getSupplierByNIT"></a>
 # **getSupplierByNIT**
-> SupplierGetElementDto getSupplierByNIT(NIT)
+> SupplierResponse getSupplierByNIT(NIT)
 
-
+Gets a supplier by its NIT
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **NIT** | **String**|  | [default to null] |
+| **NIT** | **String**| The NIT of the supplier to search for. | [default to null] |
 
 ### Return type
 
-[**SupplierGetElementDto**](../Models/SupplierGetElementDto.md)
+[**SupplierResponse**](../Models/SupplierResponse.md)
 
 ### Authorization
 
@@ -112,14 +112,14 @@ No authorization required
 # **updateSupplier**
 > updateSupplier(NIT, SupplierUpdateDto)
 
-
+Updates a supplier
 
 ### Parameters
 
 |Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **NIT** | **String**|  | [default to null] |
-| **SupplierUpdateDto** | [**SupplierUpdateDto**](../Models/SupplierUpdateDto.md)|  | [optional] |
+| **NIT** | **String**| The NIT of the supplier to update. | [default to null] |
+| **SupplierUpdateDto** | [**SupplierUpdateDto**](../Models/SupplierUpdateDto.md)| Supplier to update | [optional] |
 
 ### Return type
 

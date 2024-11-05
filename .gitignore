@@ -53,3 +53,8 @@ Properties/
 src/Proveedores/*
 src/ConsultaInventario/*
 .fake
+docs/.openapi-generator-ignore
+openapitools.json
+docs/openapitools.json
+docs/.openapi-generator/VERSION
+docs/.openapi-generator/FILES
