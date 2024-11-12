@@ -4,5 +4,5 @@ namespace GestionInventario.src.Modules.Auths.Services;
 
 public interface IAuthService
     {
-        AuthResponse ValidateUser(string email, string password);
+        Task<AuthResponse> ValidateUserAsync(string email, string password);
     }

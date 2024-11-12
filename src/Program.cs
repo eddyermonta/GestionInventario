@@ -3,7 +3,6 @@ using System.Reflection;
 using AutoMapper;
 using GestionInventario.src.Core.AutoMapperPrf;
 using GestionInventario.src.Data;
-using GestionInventario.src.Modules.Auths.Repositories;
 using GestionInventario.src.Modules.Auths.Services;
 using GestionInventario.src.Modules.Categories.Repositories;
 using GestionInventario.src.Modules.Categories.Services;
@@ -16,12 +15,10 @@ using GestionInventario.src.Modules.Products.Services;
 using GestionInventario.src.Modules.Suppliers.Repositories;
 using GestionInventario.src.Modules.Suppliers.Services;
 using GestionInventario.src.Modules.Users.Domains.Models;
-using GestionInventario.src.Modules.Users.Repositories;
 using GestionInventario.src.Modules.Users.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +42,7 @@ builder.Services.AddSingleton(mapper);
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserService, UserServiceManager>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
@@ -55,8 +52,6 @@ builder.Services.AddScoped<IMovementSupplierService, MovementSupplierService>();
 
 
 // Add repositories to the container
-builder.Services.AddScoped<IUserRepository, UserRepositoryBD>();
-builder.Services.AddScoped<IAuthRepository, AuthRepositoryBD>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
@@ -82,10 +77,11 @@ builder.Services.AddSwaggerGen(c =>
         c.IncludeXmlComments(xmlPath);
     });
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+builder.Services.AddDefaultIdentity<User>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
-}).AddRoles<IdentityRole>()
+})
+.AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<MyDbContext>()
 .AddDefaultTokenProviders();
 

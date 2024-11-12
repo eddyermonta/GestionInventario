@@ -14,10 +14,6 @@ namespace GestionInventario.src.Core.Shared
     {
         usersByEmail.Add("admin@localhost", new User
         {
-            Id = Guid.NewGuid(),
-            Name = "Admin User", // Debe tener entre 5 y 30 caracteres y solo letras y espacios
-            LastName = "Admin", // Puede ser nulo, pero si se proporciona, debe cumplir con la validación
-            DocumentType = DocumentType.CC,
             DocumentNumber = "123456789", // Debe tener entre 5 y 15 dígitos
             Address = new Address
             {

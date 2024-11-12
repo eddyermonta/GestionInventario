@@ -9,9 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionInventario.src.Data
 {
-    public class MyDbContext(DbContextOptions<MyDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+    public class MyDbContext(DbContextOptions<MyDbContext> options) : IdentityDbContext<User>(options)
     {
-        public required DbSet<User> UsersBD { get; set; } 
         public required DbSet<Address> AddressesBD { get; set; }
         public required DbSet<Product> ProductsBD { get; set; }
         public required DbSet<Supplier> SuppliersBD { get; set; }
@@ -20,7 +19,7 @@ namespace GestionInventario.src.Data
         public required DbSet<Movement> MovementsBD { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
-            optionsBuilder.UseNpgsql();
+            if (!optionsBuilder.IsConfigured) optionsBuilder.UseNpgsql();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

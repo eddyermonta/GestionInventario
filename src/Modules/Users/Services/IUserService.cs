@@ -6,7 +6,7 @@ namespace GestionInventario.src.Modules.Users.Services;
 public interface IUserService
 {
     UserResponse? AddUser(UserRequest userRequest);
-    bool UpdateUser(UserUpdateRequest userUpdateRequest, string email);
+    Task<bool> UpdateUser(UserUpdateRequest userUpdateRequest, string email);
     UserResponse? GetUserByEmail(string email);
     IEnumerable<UserResponse> GetAllUsers();
 }

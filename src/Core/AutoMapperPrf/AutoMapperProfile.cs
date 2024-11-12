@@ -96,16 +96,21 @@ namespace GestionInventario.src.Core.AutoMapperPrf
 
         private void CreateUserMaps()
         {
-            CreateMap<User, UserResponse>().
-            ForMember(dest => dest.DocumentType, opt => opt.MapFrom
-            (
-                src =>  src.DocumentType == DocumentType.CC? "CC":"CE"
-            )).ReverseMap();
+           // Mapeo de User a UserResponse, excluyendo campos de Identity que no queremos mapear manualmente
+        CreateMap<User, UserResponse>()
+            .ForMember(dest => dest.DocumentType, opt => opt.MapFrom(src => src.DocumentType == DocumentType.CC ? "CC" : "CE"))
+            .ReverseMap();
 
-            CreateMap<User, UserRequest>().ReverseMap();
+        // Mapeo de User a UserRequest, excluyendo PasswordHash o cualquier otro campo que no necesitas
+        CreateMap<User, UserRequest>()
+            .ForMember(dest => dest.DocumentType, opt => opt.MapFrom(src => src.DocumentType == DocumentType.CC ? "CC" : "CE"))
+            .ForMember(dest => dest.Password, opt => opt.Ignore()) // Excluye la contraseña de este mapeo, ya que se manejará de manera diferente
+            .ReverseMap();
 
-            CreateMap<UserUpdateRequest, User>()
-                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+        // Mapeo de UserUpdateRequest a User, sin modificar campos sensibles de Identity
+        CreateMap<UserUpdateRequest, User>()
+            .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()) // Excluye PasswordHash para evitar sobreescritura
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Condición para solo mapear valores no nulos
 
         }
 

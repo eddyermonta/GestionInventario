@@ -115,10 +115,10 @@ public class UserController(IUserService userService) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult UpdateUser([FromBody] UserUpdateRequest user, [EmailAddress] string email )
+    public async Task<IActionResult> UpdateUser([FromBody] UserUpdateRequest user, [EmailAddress] string email )
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (!_userService.UpdateUser(user, email)) return NotFound(); // Handle user not found case
+        if (!await _userService.UpdateUser(user, email)) return NotFound(); // Handle user not found case
         return NoContent(); // Return 204 if updated successfully
     }
 
