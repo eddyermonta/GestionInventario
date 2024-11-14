@@ -46,5 +46,10 @@ namespace GestionInventario.src.Modules.Movements.Services
                     throw;
                 }
             }
+
+        Task IMovementSupplierService.UpdateBySupplierReceipt(IFormFile formFile)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

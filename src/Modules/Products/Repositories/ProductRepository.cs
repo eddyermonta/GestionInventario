@@ -6,43 +6,48 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionInventario.src.Modules.Products.Repositories
 {
-    public class ProductRepository(MyDbContext myDbContext) : IProductRepository
+    public class ProductRepository
+    (
+        MyDbContext myDbContext
+    )
+        : IProductRepository
     {
         private readonly MyDbContext _context = myDbContext;
-        public Product CreateProduct(Product product)
+
+        public async Task<Product> CreateProduct(Product product)
         {
             _context.ProductsBD.Add(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return product;
         }
-        public void DeleteProduct(Product product)
+        public async Task DeleteProduct(Product product)
         {
             _context.ProductsBD.Remove(product);
+            await _context.SaveChangesAsync();
         }
 
-        public Product GetProductByName(string name)
+        public async Task<Product?> GetProductByName(string name)
         {
-            return _context.ProductsBD
+            return await _context.ProductsBD
             .Include(s => s.Supplier)
             .Include(pc => pc.ProductCategories)
             .ThenInclude(c => c.Category)
-            .FirstOrDefault(s => s.Name == name)!;
+            .FirstOrDefaultAsync(s => s.Name == name)!;
         }
 
-        public IEnumerable<Product> GetAllProducts()
+        public async Task<IEnumerable<Product?>> GetAllProducts()
         {
-            return [.. _context.ProductsBD
+            return await _context.ProductsBD
             .Include(s => s.Supplier)
             .Include(pc => pc.ProductCategories)
-            .ThenInclude(c => c.Category)];
+            .ThenInclude(c => c.Category)
+            .ToListAsync();
         }
 
-        public void UpdateProduct(Product product)
+        public async Task UpdateProduct(Product product)
         {
             _context.ProductsBD.Update(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
-
-
     }
 }

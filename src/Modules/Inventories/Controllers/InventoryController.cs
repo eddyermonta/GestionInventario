@@ -17,7 +17,8 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
         ICategoryService categoryService,
         IMovementManualService movementManualService,
         IMovementSupplierService movementSupplierService
-    )   :ControllerBase
+    )   
+        :ControllerBase
     
     {
         private readonly IProductService _productService = productService; 
@@ -42,10 +43,10 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetProductByName([FromRoute] string name)
+        public async Task<IActionResult> GetProductByName([FromRoute] string name)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var product = _productService.GetProductByName(name);
+            var product = await _productService.GetProductByName(name);
             if (product == null) return NotFound(); // Devuelve 404 si no se encuentra el producto
             return Ok(product); // Devuelve 200 y el producto
         }
@@ -60,12 +61,12 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
         /// <response code="204">No products found.</response> 
         /// <response code="200">Successful search: 200 OK and the list of products.</response>
         
-        [HttpGet(Name = "GetAllProducts")]
+        [HttpGet(Name = "GetInventory")]
         [ProducesResponseType(typeof(IEnumerable<ProductResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult GetAllProducts()
+        public async Task<IActionResult> GetInventory()
         {
-            var products = _productService.GetAllProducts();
+            var products = await _productService.GetAllProducts();
             if (!products.Any()) return NoContent(); // Devuelve 204 si no hay producto
 
             return Ok(products); // Devuelve 200 y la lista de producto
@@ -88,12 +89,12 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
         [ProducesResponseType(typeof(CategoryProductsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetProductsByCategoryName([FromRoute] string categoryName)
+        public async Task<IActionResult> GetProductsByCategoryName([FromRoute] string categoryName)
         {
             if (string.IsNullOrWhiteSpace(categoryName))
                 return BadRequest("Category name cannot be empty."); // Devuelve 400 si el nombre de la categoría es inválido
         
-            var categoryProductsResponse = _categoryService.GetProductsByCategoryName(categoryName);
+            var categoryProductsResponse = await _categoryService.GetProductsByCategoryName(categoryName);
 
             if (categoryProductsResponse == null || categoryProductsResponse.Products == null || categoryProductsResponse.Products.Count == 0)
                 return NotFound(); // Devuelve 404 si no se encuentra la categoría o no hay productos
@@ -118,19 +119,19 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
         [HttpPut("{movementCategory}", Name = "UpdateInventory")]
         [ProducesResponseType(typeof(MovementResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateInventory([FromRoute] MovementCategory movementCategory, [FromBody] MovementRequest movementRequest)
+        public async Task<IActionResult> UpdateInventory([FromRoute] MovementCategory movementCategory, [FromBody] MovementRequest movementRequest)
         {
             if(movementCategory == MovementCategory.entrada)
-                {
-                   var movement = _movementManualService.AddInventoryStock(movementRequest);
-                   if(movement == null) return BadRequest("Movement not created"); 
+            {
+                var movement = await _movementManualService.AddInventoryStock(movementRequest);
+                if(movement == null) return BadRequest("Movement not created"); 
 
-                }
-            if (movementCategory == MovementCategory.salida){
-                    var movement = _movementManualService.ReduceInventoryStock(movementRequest);
-                    if(movement == null) return BadRequest("Movement not created"); 
-                    
-                }
+            }
+            if (movementCategory == MovementCategory.salida)
+            {
+                var movement = await _movementManualService.ReduceInventoryStock(movementRequest);
+                if(movement == null) return BadRequest("Movement not created"); 
+            }
                 return Ok("Movement created");
         } 
             
@@ -148,14 +149,14 @@ namespace GestionInventario.src.Modules.Inventories.Controllers
         [HttpPut("supplierReceipt", Name = "UpdateBySupplierReceipt")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateByReceipt(IFormFile supplierReceipt)
+        public async Task<IActionResult> UpdateByReceipt(IFormFile supplierReceipt)
         {
             if (supplierReceipt == null || supplierReceipt.Length == 0)
                 return BadRequest("El archivo es requerido.");
 
             try
             {
-                _movementSupplierService.UpdateBySupplierReceipt(supplierReceipt);
+                await _movementSupplierService.UpdateBySupplierReceipt(supplierReceipt);
                 return Ok("Inventario actualizado correctamente.");
             }
             catch (Exception ex)

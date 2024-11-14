@@ -8,9 +8,11 @@ namespace GestionInventario.src.Modules.Categories.Services
 {
     public class CategoryService(ICategoryRepository categoryRepository, IMapper mapper) : ICategoryService
     {
+
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
         private readonly IMapper _mapper = mapper;
-        public (List<CategoryResponseName> AddedCategories, List<string> ExistingCategories) AddCategories(List<string> namesCategories)
+
+        public async Task<(List<CategoryResponseName> AddedCategories, List<string> ExistingCategories)> AddCategories(List<string> namesCategories)
         {
             var addedCategories = new List<CategoryResponseName>();
             var existingCategories = new List<string>();
@@ -19,43 +21,45 @@ namespace GestionInventario.src.Modules.Categories.Services
             {
                 if (string.IsNullOrEmpty(name)) throw new InvalidOperationException("El nombre de la categoría no puede ser nulo o vacío.");
                 
-                if (_categoryRepository.GetCategoryByName(name) != null){
+                if (await _categoryRepository.GetCategoryByName(name) != null)
+                {
                     existingCategories.Add(name);
                     continue;
                 }
 
                 var category = new Category { Name = name };
-                _categoryRepository.CreateCategory(category);
+                await _categoryRepository.CreateCategory(category);
                 addedCategories.Add(_mapper.Map<CategoryResponseName>(category));
             }
 
             return (addedCategories, existingCategories);
         }
+        
 
-        public bool DeleteCategory(string name)
+        public async Task<bool> DeleteCategory(string name)
         {
-            var existingCategory = _categoryRepository.GetCategoryByName(name);
+            var existingCategory = await _categoryRepository.GetCategoryByName(name);
             if (existingCategory == null) return false;
-            _categoryRepository.DeleteCategory(existingCategory);
+            await _categoryRepository.DeleteCategory(existingCategory);
             return true;
         }
 
-        public IEnumerable<CategoryResponseName> GetAllCategories()
+        public async Task<IEnumerable<CategoryResponseName>> GetAllCategories()
         {
-            var categories = _categoryRepository.GetAllCategories();
+            var categories = await _categoryRepository.GetAllCategories();
             return _mapper.Map<IEnumerable<CategoryResponseName>>(categories);
         }
 
-        public CategoryResponse? GetCategoryByName(string name)
+        public async Task<CategoryResponse?> GetCategoryByName(string name)
         {
-            var category = _categoryRepository.GetCategoryByName(name);
+            var category = await _categoryRepository.GetCategoryByName(name);
             if (category == null) return null;
             return _mapper.Map<CategoryResponse>(category);
         }
 
-        public CategoryProductsResponse? GetProductsByCategoryName(string categoryName)
+        public async Task<CategoryProductsResponse?> GetProductsByCategoryName(string categoryName)
         {
-            var category = _categoryRepository.GetProductsByCategoryName(categoryName);
+            var category = await _categoryRepository.GetProductsByCategoryName(categoryName);
             if (category == null) return new CategoryProductsResponse { Products = [] };
             
             var products = category
@@ -68,13 +72,13 @@ namespace GestionInventario.src.Modules.Categories.Services
             };
         }
 
-        public bool UpdateCategory(CategoryResponseName categoryResponseName, string name)
+        public async Task<bool> UpdateCategory(CategoryResponseName categoryResponseName, string name)
         {
-            var existingCategory = _categoryRepository.GetCategoryByName(name);
+            var existingCategory = await _categoryRepository.GetCategoryByName(name);
             if (existingCategory == null) return false;
             _mapper.Map(categoryResponseName, existingCategory);
-            _categoryRepository.UpdateCategory(existingCategory);
+            await _categoryRepository.UpdateCategory(existingCategory);
             return true;
         }
     }
-}
+    }

@@ -3,24 +3,28 @@ using GestionInventario.src.Modules.Movements.Domains.Models;
 
 namespace GestionInventario.src.Modules.Movements.Repositories
 {
-    public class MovementRepository(MyDbContext myDbContext) : IMovementRepository
+    public class MovementRepository
+    (
+        MyDbContext myDbContext
+    ) 
+        : IMovementRepository
     {
         private readonly MyDbContext _myDbContext = myDbContext;
 
-        public void Add(Movement movement)
+        public async Task Add(Movement movement)
         {
             _myDbContext.MovementsBD.Add(movement);
-            _myDbContext.SaveChanges();
+            await _myDbContext.SaveChangesAsync();
         }
 
-        public Movement Get(int id)
+        public async Task<Movement> Get(int id)
         {
-            return _myDbContext.MovementsBD.FirstOrDefault(m => m.Id.Equals(id))!;
+            return await Task.Run(() => _myDbContext.MovementsBD.FirstOrDefault(m => m.Id.Equals(id))!);
         }
 
-        public IEnumerable<Movement> GetAll()
+        public Task<IEnumerable<Movement>> GetAll()
         {
-            return [.. _myDbContext.MovementsBD];
+            return Task.FromResult<IEnumerable<Movement>>(_myDbContext.MovementsBD.ToList());
         }
     }
 }

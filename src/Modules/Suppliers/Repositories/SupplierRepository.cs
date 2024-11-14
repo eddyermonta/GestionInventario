@@ -6,41 +6,41 @@ namespace GestionInventario.src.Modules.Suppliers.Repositories{
     public class SupplierRepository(MyDbContext dbContext) : ISupplierRepository
     {
         private readonly MyDbContext _dbContext = dbContext;
-        public void CreateSupplier(Supplier supplier)
+        public async Task CreateSupplier(Supplier supplier)
         {
             _dbContext.SuppliersBD.Add(supplier);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void DeleteSupplierByNIT(Supplier supplier)
+        public async Task DeleteSupplierByNIT(Supplier supplier)
         {
             _dbContext.SuppliersBD.Remove(supplier);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<Supplier> GetAllSuppliers()
+        public async Task<IEnumerable<Supplier?>> GetAllSuppliers()
         {
-            return [.._dbContext.SuppliersBD.Include(s => s.Address)];
+            return await _dbContext.SuppliersBD.Include(s => s.Address).ToListAsync();
         }
 
-        public Supplier GetSupplierByNIT(string NIT)
+        public async Task<Supplier?> GetSupplierByNIT(string NIT)
         {
-            return _dbContext.SuppliersBD
+            return await _dbContext.SuppliersBD
             .Include(s => s.Address)
-            .FirstOrDefault(s => s.NIT == NIT)!;
+            .FirstOrDefaultAsync(s => s.NIT == NIT)!;
         }
 
-          public Supplier GetSupplierByName(string name)
+        public async Task<Supplier?> GetSupplierByName(string name)
         {
-            return _dbContext.SuppliersBD
+            return await _dbContext.SuppliersBD
             .Include(s => s.Address)
-            .FirstOrDefault(s => s.Name == name)!;
+            .FirstOrDefaultAsync(s => s.Name == name)!;
         }
 
-        public void UpdateSupplier(Supplier supplier)
+        public async Task UpdateSupplier(Supplier supplier)
         {
             _dbContext.SuppliersBD.Update(supplier);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

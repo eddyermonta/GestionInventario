@@ -11,12 +11,14 @@ namespace GestionInventario.src.Modules.Products.Controllers
     
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController(
+    public class ProductController
+    (
         IProductService productService,
         ISupplierService supplierService,
         IProductCategoryService productCategoryService,
         ICategoryService categoryService
-        ) : ControllerBase
+    ) 
+        : ControllerBase
     {
         private readonly IProductService _productService = productService;
         private readonly IProductCategoryService _productCategoryService = productCategoryService; 
@@ -42,30 +44,30 @@ namespace GestionInventario.src.Modules.Products.Controllers
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult AddProduct([FromBody] ProductRequest productRequest, [FromRoute] string NIT)
+        public async Task<IActionResult> AddProduct([FromBody] ProductRequest productRequest, [FromRoute] string NIT)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
 
             // Comprueba si el proveedor existe
-            var supplierResponse = _supplierService.GetSupplierByNIT(NIT);
+            var supplierResponse = await _supplierService.GetSupplierByNIT(NIT);
             if (supplierResponse == null) return NotFound(new { message = "Proveedor no encontrado." }); // Devuelve 404 si no se encuentra el proveedor
             
            // Añade el producto retorno idProducto para product category y el movimiento
-            var productResponseId = _productService.AddProduct(productRequest, supplierResponse.Id); // Añade el producto
+            var productResponseId = await _productService.AddProduct(productRequest, supplierResponse.Id); // Añade el producto
             if (productResponseId == null) return BadRequest(new { message = "Error al insertar el producto." });
 
             
-            List<string> missingCategories = [];
+            List<string> missingCategories = new List<string>();
             //obtener lista de categorias verificar si existe, si existe añadir los ids
             foreach (var categoryName in productRequest.Categories)
             {
-                var categoryResponse = _categoryService.GetCategoryByName(categoryName);
+                var categoryResponse = await _categoryService.GetCategoryByName(categoryName);
                 if (categoryResponse == null)
                 {
                     missingCategories.Add(categoryName); //no se encuentra la categoria
                     continue;
                 } 
-                if(AddProductCategory(productResponseId.Id, categoryResponse.Id))
+                if(await AddProductCategory(productResponseId.Id, categoryResponse.Id))
                 {
                     productResponseId.Categories.Add(categoryName);
                 }
@@ -80,14 +82,14 @@ namespace GestionInventario.src.Modules.Products.Controllers
             return CreatedAtRoute("GetProductByName", new { name = productResponseId.Name }, productResponseId); // Devuelve 201 y el producto
         }
 
-        private bool AddProductCategory(Guid productId, Guid categoryId)
+        private async Task<bool> AddProductCategory(Guid productId, Guid categoryId)
         {
             var productCategoryRequest = new ProductCategoryRequest
             {
                 ProductId = productId,
                 CategoryId = categoryId
             };
-            return _productCategoryService.AddProductCategory(productCategoryRequest);
+            return await _productCategoryService.AddProductCategory(productCategoryRequest);
 
         }
 
@@ -110,10 +112,10 @@ namespace GestionInventario.src.Modules.Products.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateProduct([FromRoute] string name ,[FromBody] ProductResponse productResponse)
+        public async Task<IActionResult> UpdateProduct([FromRoute] string name ,[FromBody] ProductResponse productResponse)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _productService.UpdateProduct(productResponse, name);
+            var success = await _productService.UpdateProduct(productResponse, name);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra el producto
 
             return NoContent(); // Devuelve 204 si se actualiza correctamente
@@ -136,13 +138,33 @@ namespace GestionInventario.src.Modules.Products.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteProduct([FromRoute] string name)
+        public async Task<IActionResult> DeleteProduct([FromRoute] string name)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _productService.DeleteProduct(name);
+            var success = await _productService.DeleteProduct(name);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra el producto
 
             return NoContent(); // Devuelve 204 si se elimina correctamente
+        }
+
+        /// <summary>
+        ///  Gets all products.
+        /// </summary>
+        /// <returns>
+        ///  Successful search: 200 OK and the list of products.
+        /// </returns>
+        /// <response code="204">No products found.</response> 
+        /// <response code="200">Successful search: 200 OK and the list of products.</response>
+        
+        [HttpGet(Name = "GetAllProducts")]
+        [ProducesResponseType(typeof(IEnumerable<ProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> GetAllProducts()
+        {
+            var products = await _productService.GetAllProducts();
+            if (!products.Any()) return NoContent(); // Devuelve 204 si no hay producto
+
+            return Ok(products); // Devuelve 200 y la lista de producto
         }
     }
 }

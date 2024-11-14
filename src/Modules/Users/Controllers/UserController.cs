@@ -39,10 +39,10 @@ public class UserController(IUserService userService) : ControllerBase
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult GetUserByEmail([EmailAddress] string email)
+    public async Task<IActionResult> GetUserByEmail([EmailAddress] string email)
     {
         if(!ModelState.IsValid) return BadRequest(ModelState);
-        var user = _userService.GetUserByEmail(email);
+        var user = await _userService.GetUserByEmail(email);
         if (user == null) return NotFound("User not found"); // Devuelve 404 si no se encuentra el usuario
         return Ok(user);
     }
@@ -61,9 +61,9 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpGet(Name = "GetAllUsers")]
     [ProducesResponseType(typeof(IEnumerable<UserResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult GetAllUsers()
+    public async Task<IActionResult> GetAllUsers()
     {
-        var users = _userService.GetAllUsers();
+        var users = await _userService.GetAllUsers();
         if (!users.Any()) return NoContent(); // Devuelve 204 si no hay usuarios
         return Ok(users);  // Devuelve 200 y la lista de usuarios
     }
@@ -85,10 +85,10 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPost(Name = "AddUser")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult AddUser([FromBody] UserRequest user)
+    public async Task<IActionResult> AddUser([FromBody] UserRequest user)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var userResponse = _userService.AddUser(user);
+        var userResponse = await _userService.AddUser(user);
         if (userResponse == null) return BadRequest("User already exists"); // Devuelve 400 si el usuario ya existe
         // Devuelve 201 y la ubicación del nuevo recurso
         return CreatedAtRoute("GetUserByEmail", new { email = user.Email }, userResponse);

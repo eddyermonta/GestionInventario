@@ -5,12 +5,12 @@ namespace GestionInventario.src.Modules.Categories.Repositories
 {
     public interface ICategoryRepository
     {
-        Category GetCategoryByName(string name);
-        IEnumerable<Product> GetProductsByCategoryName(string categoryName);
-        IEnumerable<Category> GetAllCategories();
-        void CreateCategory(Category category);
-        void UpdateCategory(Category category);
-        void DeleteCategory(Category category);
+        Task<Category> GetCategoryByName(string name);
+        Task<IEnumerable<Product>> GetProductsByCategoryName(string categoryName);
+        Task<IEnumerable<Category>> GetAllCategories();
+        Task CreateCategory(Category category);
+        Task UpdateCategory(Category category);
+        Task DeleteCategory(Category category);
         
     }
 }

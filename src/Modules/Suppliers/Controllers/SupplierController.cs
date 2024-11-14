@@ -28,11 +28,11 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
         [ProducesResponseType(typeof(SupplierResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetSupplierByNIT([FromRoute] string NIT)
+        public async Task<IActionResult> GetSupplierByNIT([FromRoute] string NIT)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
             
-            var supplier = _service.GetSupplierByNIT(NIT); 
+            var supplier = await _service.GetSupplierByNIT(NIT); 
             if (supplier == null) return NotFound(); // Devuelve 404 si no se encuentra el proveedor
             return Ok(supplier); // Devuelve 200 y el proveedor
         }
@@ -49,9 +49,9 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
         [HttpGet(Name = "GetAllSuppliers")]
         [ProducesResponseType(typeof(IEnumerable<SupplierDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult GetAllSuppliers()
+        public async Task<IActionResult> GetAllSuppliers()
         {
-            var suppliers = _service.GetAllSuppliers();
+            var suppliers = await _service.GetAllSuppliers();
             if (!suppliers.Any()) return NoContent(); // Devuelve 204 si no hay proveedores
 
             return Ok(suppliers); // Devuelve 200 y la lista de proveedores
@@ -72,11 +72,11 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
         [HttpPost (Name = "AddSupplier")]
         [ProducesResponseType(typeof(SupplierDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddSupplier([FromBody] SupplierDto supplierDto)
+        public async Task<IActionResult> AddSupplier([FromBody] SupplierDto supplierDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
 
-            _service.AddSupplier(supplierDto); // Añade el proveedor
+            await _service.AddSupplier(supplierDto); // Añade el proveedor
 
             return CreatedAtRoute("GetSupplierByNIT", new { supplierDto.NIT }, supplierDto); // Devuelve 201 y el proveedor
         }
@@ -100,10 +100,10 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateSupplier([FromRoute] string NIT, [FromBody] SupplierUpdateDto supplierUpdateDto)
+        public async Task<IActionResult> UpdateSupplier([FromRoute] string NIT, [FromBody] SupplierUpdateDto supplierUpdateDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _service.UpdateSupplier(supplierUpdateDto, NIT);
+            var success = await _service.UpdateSupplier(supplierUpdateDto, NIT);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra el proveedor
 
             return NoContent(); // Devuelve 204 si se ha actualizado correctamente
@@ -125,10 +125,10 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteSupplierByNIT([FromRoute]  string NIT)
+        public async Task<IActionResult> DeleteSupplierByNIT([FromRoute]  string NIT)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _service.DeleteSupplierByNIT(NIT);
+            var success = await _service.DeleteSupplierByNIT(NIT);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra el proveedor
 
             return NoContent(); // Devuelve 204 si se ha eliminado correctamente

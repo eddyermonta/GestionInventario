@@ -4,22 +4,26 @@ using GestionInventario.src.Modules.ProductCategories.Domain.Model;
 
 namespace GestionInventario.src.Modules.ProductCategories.Repositories
 {
-    public class ProductCategoryRepository(MyDbContext myDbContext) : IProductCategoryRepository
+    public class ProductCategoryRepository
+    (
+        MyDbContext myDbContext
+    )
+        : IProductCategoryRepository
     {
         private readonly MyDbContext _context = myDbContext;
         
-        public bool CreateProductCategory(ProductCategory productCategory)
+        public async Task<bool> CreateProductCategory(ProductCategory productCategory)
         {
             _context.ProductCategoriesBD.Add(productCategory);
-            if(_context.SaveChanges()>0) return true;
+            if(await _context.SaveChangesAsync() > 0) return true;
             return false;
 
         }
 
-        public void Remove(ProductCategory productCategory)
+        public async Task Remove(ProductCategory productCategory)
         {
             _context.ProductCategoriesBD.Remove(productCategory);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

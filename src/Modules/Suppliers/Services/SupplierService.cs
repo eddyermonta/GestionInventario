@@ -5,47 +5,54 @@ using GestionInventario.src.Modules.Suppliers.Domains.Models;
 using GestionInventario.src.Modules.Suppliers.Repositories;
 
 namespace GestionInventario.src.Modules.Suppliers.Services{
-    public class SupplierService(ISupplierRepository supplierRepository, IMapper mapper) : ISupplierService
+    public class SupplierService
+    (
+        ISupplierRepository supplierRepository,
+        IMapper mapper
+    )
+        : ISupplierService
     {
+
         private readonly ISupplierRepository _supplierRepository = supplierRepository;
         private readonly IMapper _mapper = mapper;
 
-        public void AddSupplier(SupplierDto supplierDto)
+
+        public async Task AddSupplier(SupplierDto supplierDto)
         {
-            if (_supplierRepository.GetSupplierByNIT(supplierDto.NIT) != null) throw new InvalidOperationException("El proveedor ya existe.");
-            if (_supplierRepository.GetSupplierByName(supplierDto.Name) != null) throw new InvalidOperationException("El proveedor ya existe.");
+            if (await _supplierRepository.GetSupplierByNIT(supplierDto.NIT) != null) throw new InvalidOperationException("El proveedor ya existe.");
+            if (await _supplierRepository.GetSupplierByName(supplierDto.Name) != null) throw new InvalidOperationException("El proveedor ya existe.");
             
             var supplier = _mapper.Map<Supplier>(supplierDto);
-            _supplierRepository.CreateSupplier(supplier);
+            await _supplierRepository.CreateSupplier(supplier);
         }
 
-        public bool DeleteSupplierByNIT(string NIT)
+        public async Task<bool> DeleteSupplierByNIT(string NIT)
         {
-            var existingSupplier = _supplierRepository.GetSupplierByNIT(NIT);
+            var existingSupplier = await _supplierRepository.GetSupplierByNIT(NIT);
             if (existingSupplier == null) return false;
-            _supplierRepository.DeleteSupplierByNIT(existingSupplier);
+            await _supplierRepository.DeleteSupplierByNIT(existingSupplier);
             return true;
         }
 
-        public IEnumerable<SupplierDto> GetAllSuppliers()
+        public async Task<IEnumerable<SupplierDto>> GetAllSuppliers()
         {
-            var suppliers = _supplierRepository.GetAllSuppliers();
+            var suppliers = await _supplierRepository.GetAllSuppliers();
             return _mapper.Map<IEnumerable<SupplierDto>>(suppliers);
         }
 
-        public SupplierResponse? GetSupplierByNIT(string NIT)
+        public async Task<SupplierResponse?> GetSupplierByNIT(string NIT)
         {
-            var supplier = _supplierRepository.GetSupplierByNIT(NIT);
+            var supplier = await _supplierRepository.GetSupplierByNIT(NIT);
             if (supplier == null) return null;
             return _mapper.Map<SupplierResponse>(supplier);
         }
 
-        public bool UpdateSupplier(SupplierUpdateDto supplierDto, string NIT)
+        public async Task<bool> UpdateSupplier(SupplierUpdateDto supplierDto, string NIT)
         {
-            var existingSupplier = _supplierRepository.GetSupplierByNIT(NIT);
+            var existingSupplier = await _supplierRepository.GetSupplierByNIT(NIT);
             if (existingSupplier == null) return false;
             _mapper.Map(supplierDto, existingSupplier);
-            _supplierRepository.UpdateSupplier(existingSupplier);
+            await _supplierRepository.UpdateSupplier(existingSupplier);
             return true;
         }
     }

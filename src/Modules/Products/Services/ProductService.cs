@@ -14,15 +14,18 @@ using GestionInventario.src.Modules.Products.Repositories;
 
 namespace GestionInventario.src.Modules.Products.Services
 {
-    public class ProductService(
+    public class ProductService
+    (
         IProductRepository productRepository,
         IProductCategoryRepository productCategoryRepository,
         ICategoryRepository categoryRepository,
         IMovementRepository movementRepository,
         IMapper mapper,
         MyDbContext context
-         ) : IProductService
+    ) 
+    : IProductService
     {
+
         private readonly IProductRepository _productRepository = productRepository;
         private readonly IProductCategoryRepository _productCategoryRepository = productCategoryRepository;
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
@@ -30,18 +33,18 @@ namespace GestionInventario.src.Modules.Products.Services
         private readonly IMapper _mapper = mapper;
         private readonly MyDbContext _context = context;
 
-        public ProductResponseId? AddProduct(ProductRequest productRequest, Guid supplierId)
+        public async Task<ProductResponseId?> AddProduct(ProductRequest productRequest, Guid supplierId)
         {
             using var transaction = _context.Database.BeginTransaction();
             try
             {
-                if (_productRepository.GetProductByName(productRequest.Name) != null) return null;
+                if (await _productRepository.GetProductByName(productRequest.Name) != null) return null;
                 
                 var product = _mapper.Map<Product>(productRequest);
                 product.SupplierId = supplierId;
 
-                _productRepository.CreateProduct(product);
-                AddMovementReason(product, "Creación de producto");
+                await _productRepository.CreateProduct(product);
+                await AddMovementReasonAsync(product, "Creación de producto");
 
                 transaction.Commit();
                 
@@ -52,37 +55,37 @@ namespace GestionInventario.src.Modules.Products.Services
                 transaction.Rollback();
                 throw;
             }
-           
+
         }
 
-        public bool DeleteProduct(string name)
+        public async Task<bool> DeleteProduct(string name)
         {
-            var existingProduct = _productRepository.GetProductByName(name);
+            var existingProduct = await _productRepository.GetProductByName(name);
             if (existingProduct == null) return false;
-            _productRepository.DeleteProduct(existingProduct);
-            AddMovementReason(existingProduct, "Eliminación de producto");
-             return true;  
+            await _productRepository.DeleteProduct(existingProduct);
+            await AddMovementReasonAsync(existingProduct, "Eliminación de producto");
+            return true;
         }
 
-        public ProductResponse? GetProductByName(string name)
+        public async Task<ProductResponse?> GetProductByName(string name)
         {
-            var product = _productRepository.GetProductByName(name);
+            var product = await _productRepository.GetProductByName(name);
             if (product == null) return null;
             return _mapper.Map<ProductResponse>(product);
         }
 
-        public IEnumerable<ProductResponse> GetAllProducts()
+        public async Task<IEnumerable<ProductResponse>> GetAllProducts()
         {
-            var users = _productRepository.GetAllProducts();
+            var users = await _productRepository.GetAllProducts();
             return _mapper.Map<IEnumerable<ProductResponse>>(users);
         }
 
-        public bool UpdateProduct(ProductResponse productResponse, string name)
+        public async Task<bool> UpdateProduct(ProductResponse productResponse, string name)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var existingProduct = _productRepository.GetProductByName(name);
+                var existingProduct = await _productRepository.GetProductByName(name);
 
                 if (existingProduct == null) return false;
 
@@ -96,12 +99,12 @@ namespace GestionInventario.src.Modules.Products.Services
                     existingProduct.Amount = tempAmount;
                     existingProduct.UnitPrice = tempUnitPrice;
                 }
-                AddMovementReason(existingProduct, "Actualización de producto");
-                UpdateProductCategories(existingProduct, productResponse.Categories);
+                await AddMovementReasonAsync(existingProduct, "Actualización de producto");
+                await UpdateProductCategoriesAsync(existingProduct, productResponse.Categories);
 
 
-                _productRepository.UpdateProduct(existingProduct);
-                AddMovementReason(existingProduct, "Actualización de producto");
+                await _productRepository.UpdateProduct(existingProduct);
+                await AddMovementReasonAsync(existingProduct, "Actualización de producto");
                 
                 transaction.Commit();
                 return true;
@@ -114,7 +117,7 @@ namespace GestionInventario.src.Modules.Products.Services
             }    
         }
 
-        private void UpdateProductCategories(Product existingProduct, List<string> newCategoryNames)
+        private async Task UpdateProductCategoriesAsync(Product existingProduct, List<string> newCategoryNames)
         {
             // Obtener los nombres de las categorías actuales del producto
             var currentCategoryNames = existingProduct.ProductCategories.Select(pc => pc.Category.Name).ToList();
@@ -124,7 +127,7 @@ namespace GestionInventario.src.Modules.Products.Services
             foreach (var categoryName in categoriesToRemove)
             {
                 var productCategory = existingProduct.ProductCategories.First(pc => pc.Category.Name == categoryName);
-                _productCategoryRepository.Remove(productCategory); // Elimina la relación
+                await _productCategoryRepository.Remove(productCategory); // Elimina la relación
             }
 
             // Agregar solo las nuevas categorías que no existen en la lista actual
@@ -132,7 +135,7 @@ namespace GestionInventario.src.Modules.Products.Services
             foreach (var categoryName in categoriesToAdd)
             {
                 // Comprobar si la categoría ya existe en el repositorio
-                var existingCategory = _categoryRepository.GetCategoryByName(categoryName);
+                var existingCategory = await _categoryRepository.GetCategoryByName(categoryName);
                 if (existingCategory != null)
                 {
                     // Agregar la categoría existente al producto
@@ -147,7 +150,7 @@ namespace GestionInventario.src.Modules.Products.Services
             }
         }
 
-        private void AddMovementReason(Product product, string reason)
+        private async Task AddMovementReasonAsync(Product product, string reason)
         {
              var Movementresponse = new MovementResponse(){
                 Date = DateTime.UtcNow,
@@ -161,7 +164,7 @@ namespace GestionInventario.src.Modules.Products.Services
             movement.ProductId = product.Id;
             movement.Product = product;
             
-            _movementRepository.Add(movement);     
+            await _movementRepository.Add(movement);     
         }
 
     }

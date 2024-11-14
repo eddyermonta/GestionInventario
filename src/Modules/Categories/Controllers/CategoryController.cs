@@ -6,7 +6,12 @@ namespace GestionInventario.src.Modules.Categories.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryController(ICategoryService categoryService) : ControllerBase
+    public class CategoryController
+    (
+        ICategoryService categoryService
+    )
+        : ControllerBase
+
     {
         private readonly ICategoryService _categoryService = categoryService;
 
@@ -21,9 +26,9 @@ namespace GestionInventario.src.Modules.Categories.Controllers
         [HttpGet(Name = "GetAllCategories")]
         [ProducesResponseType(typeof(IEnumerable<CategoryResponseName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult GetAllCategories()
+        public async Task<IActionResult> GetAllCategories()
         {
-            var categories = _categoryService.GetAllCategories();
+            var categories = await _categoryService.GetAllCategories();
             if (!categories.Any()) return NoContent(); // Devuelve 204 si no hay categoría
 
             return Ok(categories); // Devuelve 200 y la lista de categoría
@@ -46,10 +51,10 @@ namespace GestionInventario.src.Modules.Categories.Controllers
         [ProducesResponseType(typeof(CategoryResponseName), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetCategoryByName([FromRoute] string nameCategory)
+        public async Task<IActionResult> GetCategoryByName([FromRoute] string nameCategory)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var category = _categoryService.GetCategoryByName(nameCategory);
+            var category = await _categoryService.GetCategoryByName(nameCategory);
             if (category == null) return NotFound(); // Devuelve 404 si no se encuentra la categoría
             return Ok(category); // Devuelve 200 y la categoría
         }
@@ -69,13 +74,13 @@ namespace GestionInventario.src.Modules.Categories.Controllers
         [HttpPost(Name = "AddCategories")]
         [ProducesResponseType(typeof(CategoryResponseName), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AddCategories([FromBody] CategoryRequest categoryRequest)
+        public async Task<IActionResult> AddCategories([FromBody] CategoryRequest categoryRequest)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
 
             try
             {
-                var (addedCategories, existingCategories) = _categoryService.AddCategories(categoryRequest.NamesCategories);
+                var (addedCategories, existingCategories) = await _categoryService.AddCategories(categoryRequest.NamesCategories);
                 return CreatedAtRoute("GetAllCategories", new {}, new { Added = addedCategories, Existing = existingCategories }); // Devuelve 201 y la lista de categorías añadidas y existentes
             
             }
@@ -104,10 +109,10 @@ namespace GestionInventario.src.Modules.Categories.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateCategory([FromBody] CategoryResponseName categoryResponseName, [FromRoute] string name)
+        public async Task<IActionResult> UpdateCategory([FromBody] CategoryResponseName categoryResponseName, [FromRoute] string name)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _categoryService.UpdateCategory(categoryResponseName, name);
+            var success = await _categoryService.UpdateCategory(categoryResponseName, name);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra la categoría
 
             return NoContent(); // Devuelve 204
@@ -127,10 +132,10 @@ namespace GestionInventario.src.Modules.Categories.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult DeleteCategory([FromRoute] string name)
+        public async  Task<IActionResult> DeleteCategory([FromRoute] string name)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = _categoryService.DeleteCategory(name);
+            var success = await _categoryService.DeleteCategory(name);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra la categoría
 
             return NoContent(); // Devuelve 204

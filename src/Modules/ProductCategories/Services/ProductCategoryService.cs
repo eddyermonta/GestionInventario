@@ -12,10 +12,10 @@ namespace GestionInventario.src.Modules.ProductCategories.Services
         private readonly IProductCategoryRepository _productCategoryRepository = productCategoryRepository;
         private readonly IMapper _mapper = mapper;
         
-        public bool AddProductCategory(ProductCategoryRequest productCategoryRequest)
+        public async Task<bool> AddProductCategory(ProductCategoryRequest productCategoryRequest)
         {
             var productCategory = _mapper.Map<ProductCategory>(productCategoryRequest);
-            return _productCategoryRepository.CreateProductCategory(productCategory);
+            return await Task.Run(() => _productCategoryRepository.CreateProductCategory(productCategory));
         }
         
     }

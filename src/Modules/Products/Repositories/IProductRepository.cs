@@ -3,11 +3,10 @@ namespace GestionInventario.src.Modules.Products.Repositories
 {
     public interface IProductRepository
     {
-        Product GetProductByName(string name);
-        
-        IEnumerable<Product> GetAllProducts();
-        Product CreateProduct(Product product);
-        void UpdateProduct(Product product);
-        void DeleteProduct(Product product);
+        Task<Product?> GetProductByName(string name);
+        Task<IEnumerable<Product?>> GetAllProducts();
+        Task<Product> CreateProduct(Product product);
+        Task UpdateProduct(Product product);
+        Task DeleteProduct(Product product);
     }
 }

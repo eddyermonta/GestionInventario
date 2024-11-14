@@ -5,47 +5,52 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionInventario.src.Modules.Categories.Repositories
 {
-    public class CategoryRepository(MyDbContext myDbContext) : ICategoryRepository
+    public class CategoryRepository
+    (
+        MyDbContext myDbContext
+    )
+        : ICategoryRepository
     {
         private readonly MyDbContext _context = myDbContext;
-        public void CreateCategory(Category category)
+
+        public async Task CreateCategory(Category category)
         {
             _context.CategoriesBD.Add(category);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteCategory(Category category)
+        public async Task DeleteCategory(Category category)
         {
             _context.CategoriesBD.Remove(category);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<Category> GetAllCategories()
+        public async Task<IEnumerable<Category>> GetAllCategories()
         {
-            return _context.CategoriesBD;
+            return await Task.FromResult(_context.CategoriesBD.ToList());
         }
 
-        public Category GetCategoryByName(string name)
+        public async Task<Category> GetCategoryByName(string name)
         {
-            return _context.CategoriesBD.FirstOrDefault(c => c.Name == name)!;
+            return await Task.FromResult(_context.CategoriesBD.FirstOrDefault(c => c.Name == name)!);
         }
 
-        public IEnumerable<Product> GetProductsByCategoryName(string categoryName)
+        public async Task<IEnumerable<Product>> GetProductsByCategoryName(string categoryName)
         {
-            return _context.CategoriesBD
+            return await _context.CategoriesBD
         .Include(c => c.ProductCategories) // Incluir ProductCategories
         .ThenInclude(pc => pc.Product) // Incluir Product en ProductCategories
         .ThenInclude(p => p.ProductCategories) // Incluir ProductCategories en Product
         .ThenInclude(pc => pc.Category) // Incluir Category en ProductCategories
         .Where(c => c.Name.ToLower() == categoryName.ToLower()) // Filtrar por categoría
         .SelectMany(c => c.ProductCategories.Select(pc => pc.Product)) // Seleccionar productos
-        .ToList(); // Convertir a lista
+        .ToListAsync(); // Convertir a lista de forma asincrónica
         }
 
-        public void UpdateCategory(Category category)
+        public async Task UpdateCategory(Category category)
         {
             _context.CategoriesBD.Update(category);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
