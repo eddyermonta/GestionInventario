@@ -36,6 +36,22 @@ namespace GestionInventario.src.Modules.Suppliers.Controllers
             if (supplier == null) return NotFound(); // Devuelve 404 si no se encuentra el proveedor
             return Ok(supplier); // Devuelve 200 y el proveedor
         }
+        
+
+        [HttpGet("supplierId/{id}", Name = "GetSupplierById")]
+        [ProducesResponseType(typeof(SupplierResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetSupplierById([FromRoute] string id)
+        {
+            if(!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
+            
+            var supplier = await _service.GetSupplierById(id); 
+            if (supplier == null) return NotFound(); // Devuelve 404 si no se encuentra el proveedor
+            return Ok(supplier); // Devuelve 200 y el proveedor
+        }
+
+
 
         /// <summary>
         ///  Gets all suppliers

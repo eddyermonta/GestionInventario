@@ -30,6 +30,13 @@ namespace GestionInventario.src.Modules.Suppliers.Repositories{
             .FirstOrDefaultAsync(s => s.NIT == NIT)!;
         }
 
+        public async Task<Supplier?> GetSupplierById(string id)
+        {
+            return await _dbContext.SuppliersBD
+            .Include(s => s.Address)
+            .FirstOrDefaultAsync(s => s.Id == Guid.Parse(id))!;
+        }
+
         public async Task<Supplier?> GetSupplierByName(string name)
         {
             return await _dbContext.SuppliersBD

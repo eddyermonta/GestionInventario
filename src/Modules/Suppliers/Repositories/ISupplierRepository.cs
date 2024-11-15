@@ -6,6 +6,7 @@ namespace GestionInventario.src.Modules.Suppliers.Repositories
     {
         Task<Supplier?> GetSupplierByNIT(string NIT);
         Task<Supplier?> GetSupplierByName(string name);
+        Task<Supplier?> GetSupplierById(string id);
         Task<IEnumerable<Supplier?>> GetAllSuppliers();
         Task CreateSupplier(Supplier supplier);
         Task UpdateSupplier(Supplier supplier);

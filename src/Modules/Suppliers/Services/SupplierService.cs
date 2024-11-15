@@ -47,6 +47,12 @@ namespace GestionInventario.src.Modules.Suppliers.Services{
             return _mapper.Map<SupplierResponse>(supplier);
         }
 
+        public async Task<SupplierResponse?> GetSupplierById(string id){
+            var supplier = await _supplierRepository.GetSupplierById(id);
+            if (supplier == null) return null;
+            return _mapper.Map<SupplierResponse>(supplier);
+        }
+
         public async Task<bool> UpdateSupplier(SupplierUpdateDto supplierDto, string NIT)
         {
             var existingSupplier = await _supplierRepository.GetSupplierByNIT(NIT);

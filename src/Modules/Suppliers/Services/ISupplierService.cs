@@ -8,5 +8,6 @@ namespace GestionInventario.src.Modules.Suppliers.Services
         Task AddSupplier(SupplierDto supplierDto);
         Task<bool> UpdateSupplier(SupplierUpdateDto supplierDto, string NIT);
         Task<bool> DeleteSupplierByNIT(string NIT);
+        Task<SupplierResponse?> GetSupplierById(string id);
     }
 }
