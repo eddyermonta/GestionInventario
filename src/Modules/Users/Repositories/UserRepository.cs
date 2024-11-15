@@ -32,5 +32,11 @@ namespace GestionInventario.src.Modules.Users.Repositories
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
         }
+
+        public async Task<User?> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            return user;
+        }
     }
 }

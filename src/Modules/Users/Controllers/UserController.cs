@@ -47,6 +47,18 @@ public class UserController(IUserService userService) : ControllerBase
         return Ok(user);
     }
 
+    [HttpGet("userId/{id}", Name = "GetUserById")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetUserById(string id)
+    {
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+        var user = await _userService.GetUserById(id);
+        if (user == null) return NotFound("User not found"); // Devuelve 404 si no se encuentra el usuario
+        return Ok(user);
+    }
+
 
     /// <summary>
     /// Retrieves all users.

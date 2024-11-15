@@ -94,6 +94,14 @@ namespace GestionInventario.src.Modules.Users.Services
             return _mapper.Map<UserResponse>(user);
         }
 
+        public async Task<UserResponse?> GetUserById(string id)
+        {
+            var user = await _userRepository.GetUserById(id);
+            if (user == null) return null;
+            user.Address = await GetAddressByUserId(user.Id);
+            return _mapper.Map<UserResponse>(user);
+        }
+
         public async Task<bool> UpdateUser(UserUpdateRequest userUpdateRequest, string email)
         {
             var existingUser = await _userRepository.GetUserByEmail(email);

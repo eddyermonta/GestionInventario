@@ -9,5 +9,6 @@ namespace GestionInventario.src.Modules.Users.Repositories
         Task<bool> UpdateUser(User user);
         Task<User?> GetUserByEmail(string email);
         Task<IEnumerable<User>>  GetAllUsers();
+        Task<User?> GetUserById(string id);
     }
 }
