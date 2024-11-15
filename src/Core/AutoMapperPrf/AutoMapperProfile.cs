@@ -1,6 +1,8 @@
 
 
 using AutoMapper;
+using GestionInventario.src.Modules.Addresses.Domains.Models;
+using GestionInventario.src.Modules.Addresses.Domains.DTOs;
 using GestionInventario.src.Modules.Categories.Domain.DTOs;
 using GestionInventario.src.Modules.Categories.Domain.Models;
 using GestionInventario.src.Modules.Movements.Domains.DTOs;
@@ -15,6 +17,8 @@ using GestionInventario.src.Modules.Users.Domains.DTOs;
 using GestionInventario.src.Modules.Users.Domains.DTOS;
 using GestionInventario.src.Modules.Users.Domains.Models;
 using GestionInventario.src.Modules.Users.Domains.Models.Enums;
+using GestionInventario.src.Modules.Users.Addresses.DTOS;
+using GestionInventario.src.Modules.Addresses.Domains.DTOS;
 
 namespace GestionInventario.src.Core.AutoMapperPrf
 {
@@ -110,7 +114,9 @@ namespace GestionInventario.src.Core.AutoMapperPrf
         // Mapeo de UserUpdateRequest a User, sin modificar campos sensibles de Identity
         CreateMap<UserUpdateRequest, User>()
             .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()) // Excluye PasswordHash para evitar sobreescritura
+            .ForMember(dest => dest.IsActive, opt =>  opt.Ignore()) // Mapea IsActive de bool a bool
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Condición para solo mapear valores no nulos
+            
 
         }
 

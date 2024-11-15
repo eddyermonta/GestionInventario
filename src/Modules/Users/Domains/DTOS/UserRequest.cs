@@ -2,6 +2,7 @@ namespace GestionInventario.src.Modules.Users.Domains.DTOs;
 
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using GestionInventario.src.Modules.Addresses.Domains.DTOs;
 using GestionInventario.src.Modules.Users.Domains.Models.Enums;
 
 public class UserRequest {
@@ -34,9 +35,9 @@ public class UserRequest {
     [EmailAddress(ErrorMessage = "The email is not valid")]
     public required string Email { get; set; }
 
+    [Required(ErrorMessage = "The password is required")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-        ErrorMessage = "The password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character"
-        )]
-    public string? Password { get; set; } 
+        ErrorMessage = "The password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character")]
+    public required string Password { get; set; } 
 
 }

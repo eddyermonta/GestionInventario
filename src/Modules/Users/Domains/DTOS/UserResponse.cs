@@ -1,3 +1,5 @@
+using GestionInventario.src.Modules.Addresses.Domains.DTOS;
+
 namespace GestionInventario.src.Modules.Users.Domains.DTOS
 {
     public class UserResponse

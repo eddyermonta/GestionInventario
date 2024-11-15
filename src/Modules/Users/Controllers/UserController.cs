@@ -89,7 +89,7 @@ public class UserController(IUserService userService) : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var userResponse = await _userService.AddUser(user);
-        if (userResponse == null) return BadRequest("User already exists"); // Devuelve 400 si el usuario ya existe
+        if (userResponse == null) return BadRequest("User already exist"); // Devuelve 400 si el usuario ya existe
         // Devuelve 201 y la ubicación del nuevo recurso
         return CreatedAtRoute("GetUserByEmail", new { email = user.Email }, userResponse);
     }

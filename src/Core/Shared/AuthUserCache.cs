@@ -1,7 +1,8 @@
 
 
+using GestionInventario.src.Modules.Addresses.Domains.Models;
 using GestionInventario.src.Modules.Users.Domains.Models;
-using GestionInventario.src.Modules.Users.Domains.Models.Enums;
+
 
 namespace GestionInventario.src.Core.Shared
 {

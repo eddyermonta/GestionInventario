@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using GestionInventario.src.Modules.Users.Domains.DTOS;
+using GestionInventario.src.Modules.Users.Addresses.DTOS;
+
 
 namespace GestionInventario.src.Modules.Suppliers.Domains.DTOs
 {

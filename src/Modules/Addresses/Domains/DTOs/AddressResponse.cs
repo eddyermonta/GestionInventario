@@ -1,4 +1,4 @@
-namespace GestionInventario.src.Modules.Users.Domains.DTOS
+namespace GestionInventario.src.Modules.Addresses.Domains.DTOS
 {
     public class AddressResponse
     {

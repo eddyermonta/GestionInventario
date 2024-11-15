@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace GestionInventario.src.Modules.Users.Domains.DTOs;
+namespace GestionInventario.src.Modules.Addresses.Domains.DTOs;
 
 public class AddressRequest {
 

@@ -1,5 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
+using GestionInventario.src.Modules.Users.Addresses.DTOS;
 
 namespace GestionInventario.src.Modules.Users.Domains.DTOS
 {
@@ -20,7 +21,7 @@ namespace GestionInventario.src.Modules.Users.Domains.DTOS
     [StringLength(15, ErrorMessage = "The phone number must be lower than 15 characters")]
     [RegularExpression(@"^\d+$", ErrorMessage = "The phone number must only contain digits")]
     public string? PhoneNumber { get; set; }
-    public required bool IsActive { get; set; } //controlar que no se falsee
+    public bool? IsActive { get; set; }
 
     [StringLength(100, MinimumLength = 8, ErrorMessage = "The password must be at least 8 characters long.")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",

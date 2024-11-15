@@ -3,6 +3,8 @@ using System.Reflection;
 using AutoMapper;
 using GestionInventario.src.Core.AutoMapperPrf;
 using GestionInventario.src.Data;
+using GestionInventario.src.Modules.Addresses.Repositories;
+using GestionInventario.src.Modules.Addresses.Services;
 using GestionInventario.src.Modules.Auths.Services;
 using GestionInventario.src.Modules.Categories.Repositories;
 using GestionInventario.src.Modules.Categories.Services;
@@ -12,9 +14,12 @@ using GestionInventario.src.Modules.ProductCategories.Repositories;
 using GestionInventario.src.Modules.ProductCategories.Services;
 using GestionInventario.src.Modules.Products.Repositories;
 using GestionInventario.src.Modules.Products.Services;
+using GestionInventario.src.Modules.Roles.Repositories;
+using GestionInventario.src.Modules.Roles.Services;
 using GestionInventario.src.Modules.Suppliers.Repositories;
 using GestionInventario.src.Modules.Suppliers.Services;
 using GestionInventario.src.Modules.Users.Domains.Models;
+using GestionInventario.src.Modules.Users.Repositories;
 using GestionInventario.src.Modules.Users.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,14 +47,15 @@ builder.Services.AddSingleton(mapper);
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserServiceManager>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IMovementManualService, MovementManualService>();
 builder.Services.AddScoped<IMovementSupplierService, MovementSupplierService>();
-
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 // Add repositories to the container
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -57,6 +63,9 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 builder.Services.AddScoped<IMovementRepository, MovementRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 
 
 builder.Services.AddDbContext<MyDbContext> (options => 

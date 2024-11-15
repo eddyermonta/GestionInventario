@@ -1,6 +1,9 @@
-using GestionInventario.src.Modules.Suppliers.Domains.Models;
 
-namespace GestionInventario.src.Modules.Users.Domains.Models;
+
+using GestionInventario.src.Modules.Suppliers.Domains.Models;
+using GestionInventario.src.Modules.Users.Domains.Models;
+
+namespace GestionInventario.src.Modules.Addresses.Domains.Models;
 
 public class Address
 {

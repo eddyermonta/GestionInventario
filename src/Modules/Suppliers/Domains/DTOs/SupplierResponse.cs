@@ -1,4 +1,6 @@
-using GestionInventario.src.Modules.Users.Domains.DTOS;
+
+
+using GestionInventario.src.Modules.Addresses.Domains.DTOS;
 
 namespace GestionInventario.src.Modules.Suppliers.Domains.DTOs
 {

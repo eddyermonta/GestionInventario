@@ -1,6 +1,7 @@
 
+using GestionInventario.src.Modules.Addresses.Domains.Models;
 using GestionInventario.src.Modules.Products.Domain.Models;
-using GestionInventario.src.Modules.Users.Domains.Models;
+
 
 namespace GestionInventario.src.Modules.Suppliers.Domains.Models
 {
