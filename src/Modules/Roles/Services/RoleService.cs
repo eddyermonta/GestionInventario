@@ -17,5 +17,11 @@ namespace GestionInventario.src.Modules.Roles.Services
         {
             return await _roleRepository.EnsureRolesExist(roles);
         }
+
+        public List<string> GetRolesByUser(User user)
+        {
+            return _roleRepository.GetRolesByUser(user);
+        }
+        
     }
 }

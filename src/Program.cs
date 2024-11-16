@@ -1,10 +1,13 @@
 
 using System.Reflection;
+using System.Text;
 using AutoMapper;
 using GestionInventario.src.Core.AutoMapperPrf;
 using GestionInventario.src.Data;
 using GestionInventario.src.Modules.Addresses.Repositories;
 using GestionInventario.src.Modules.Addresses.Services;
+using GestionInventario.src.Modules.Auths.Config;
+using GestionInventario.src.Modules.Auths.Repositories;
 using GestionInventario.src.Modules.Auths.Services;
 using GestionInventario.src.Modules.Categories.Repositories;
 using GestionInventario.src.Modules.Categories.Services;
@@ -21,8 +24,10 @@ using GestionInventario.src.Modules.Suppliers.Services;
 using GestionInventario.src.Modules.Users.Domains.Models;
 using GestionInventario.src.Modules.Users.Repositories;
 using GestionInventario.src.Modules.Users.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,7 +71,9 @@ builder.Services.AddScoped<IMovementRepository, MovementRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
+builder.Services.AddSingleton<JwtToken>();
 
 builder.Services.AddDbContext<MyDbContext> (options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -86,15 +93,43 @@ builder.Services.AddSwaggerGen(c =>
         c.IncludeXmlComments(xmlPath);
     });
 
-builder.Services.AddDefaultIdentity<User>(options =>
-{
+builder.Services.AddDefaultIdentity<User>(options =>{
     options.SignIn.RequireConfirmedAccount = false;
-})
-.AddRoles<IdentityRole>()
+}).AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<MyDbContext>()
 .AddDefaultTokenProviders();
 
 builder.Configuration.AddJsonFile("Properties/appsettings.BDD.json", optional: true, reloadOnChange: true);
+
+builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme   = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme      = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme               = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var secret = builder.Configuration.GetSection("JwtConfig:Secret").Value;
+    if (string.IsNullOrEmpty(secret))
+    {
+        throw new InvalidOperationException("JWT Secret is not configured properly.");
+    }
+    var key = Encoding.ASCII.GetBytes(secret);
+
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidAudience = builder.Configuration.GetSection("JwtConfig:Issuer").Value,
+        ValidIssuer = builder.Configuration.GetSection("JwtConfig:Audience").Value,
+        ClockSkew = TimeSpan.Zero,
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
 
 var app = builder.Build();
 

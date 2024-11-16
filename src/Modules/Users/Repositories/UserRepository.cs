@@ -38,5 +38,6 @@ namespace GestionInventario.src.Modules.Users.Repositories
             var user = await _userManager.FindByIdAsync(id);
             return user;
         }
+
     }
 }

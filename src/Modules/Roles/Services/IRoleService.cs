@@ -7,5 +7,6 @@ namespace GestionInventario.src.Modules.Roles.Services
     {
         Task<bool> EnsureRolesExist(List<string> roles);
         Task<bool> AssingRoleToUser(User newUser, string role);
+        List<string> GetRolesByUser(User user);
     }
 }

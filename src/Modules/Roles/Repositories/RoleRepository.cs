@@ -27,5 +27,10 @@ namespace GestionInventario.src.Modules.Roles.Repositories
             }
             return true;
         }
+
+        public List<string> GetRolesByUser(User user)
+        {
+            return [.. _userManager.GetRolesAsync(user).Result];
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace GestionInventario.src.Modules.Roles.Repositories
     {
         Task<bool> EnsureRolesExist(List<string> roles);
         Task<bool> AddUserToRole(User user, string role);
+        List<string> GetRolesByUser(User user);
     }
 }
