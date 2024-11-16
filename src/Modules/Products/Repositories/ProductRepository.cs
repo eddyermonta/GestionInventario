@@ -30,6 +30,7 @@ namespace GestionInventario.src.Modules.Products.Repositories
         {
             return await _context.ProductsBD
             .Include(s => s.Supplier)
+            .ThenInclude(a => a.Address)
             .Include(pc => pc.ProductCategories)
             .ThenInclude(c => c.Category)
             .FirstOrDefaultAsync(s => s.Name == name)!;
@@ -39,6 +40,7 @@ namespace GestionInventario.src.Modules.Products.Repositories
         {
             return await _context.ProductsBD
             .Include(s => s.Supplier)
+            .ThenInclude(a => a.Address)
             .Include(pc => pc.ProductCategories)
             .ThenInclude(c => c.Category)
             .ToListAsync();

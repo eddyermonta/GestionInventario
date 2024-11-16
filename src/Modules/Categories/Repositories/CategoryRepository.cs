@@ -27,12 +27,12 @@ namespace GestionInventario.src.Modules.Categories.Repositories
 
         public async Task<IEnumerable<Category>> GetAllCategories()
         {
-            return await Task.FromResult(_context.CategoriesBD.ToList());
+            return await _context.CategoriesBD.ToListAsync();
         }
 
         public async Task<Category> GetCategoryByName(string name)
         {
-            return await Task.FromResult(_context.CategoriesBD.FirstOrDefault(c => c.Name == name)!);
+            return await _context.CategoriesBD.FirstOrDefaultAsync(c => c.Name == name) ?? throw new InvalidOperationException("Category not found");
         }
 
         public async Task<IEnumerable<Product>> GetProductsByCategoryName(string categoryName)

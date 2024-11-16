@@ -35,7 +35,7 @@ namespace GestionInventario.src.Modules.Products.Services
 
         public async Task<ProductResponseId?> AddProduct(ProductRequest productRequest, Guid supplierId)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 if (await _productRepository.GetProductByName(productRequest.Name) != null) return null;
@@ -46,13 +46,13 @@ namespace GestionInventario.src.Modules.Products.Services
                 await _productRepository.CreateProduct(product);
                 await AddMovementReasonAsync(product, "Creación de producto");
 
-                transaction.Commit();
+                await transaction.CommitAsync();
                 
                 return _mapper.Map<ProductResponseId>(product);
 
             }catch
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw;
             }
 
@@ -77,7 +77,7 @@ namespace GestionInventario.src.Modules.Products.Services
         public async Task<IEnumerable<ProductResponse>> GetAllProducts()
         {
             var users = await _productRepository.GetAllProducts();
-            return _mapper.Map<IEnumerable<ProductResponse>>(users);
+            return _mapper.Map<IEnumerable<ProductResponse>>(users);     
         }
 
         public async Task<bool> UpdateProduct(ProductResponse productResponse, string name)
@@ -91,7 +91,7 @@ namespace GestionInventario.src.Modules.Products.Services
 
                 var tempAmount = existingProduct.Amount;
                 var tempUnitPrice = existingProduct.UnitPrice;
-
+              
                 _mapper.Map(productResponse, existingProduct);
 
                 if(existingProduct.Amount == 0 || existingProduct.UnitPrice == tempUnitPrice)
@@ -106,13 +106,13 @@ namespace GestionInventario.src.Modules.Products.Services
                 await _productRepository.UpdateProduct(existingProduct);
                 await AddMovementReasonAsync(existingProduct, "Actualización de producto");
                 
-                transaction.Commit();
+                await transaction.CommitAsync();
                 return true;
 
             }
             catch
             {
-                transaction.Rollback();
+                await transaction.RollbackAsync();
                 throw;
             }    
         }

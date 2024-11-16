@@ -142,6 +142,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("BDD"))
 }
 
 app.UseCors("*");
+app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 
