@@ -22,8 +22,8 @@ namespace GestionInventario.src.Modules.Products.Repositories
         }
         public async Task DeleteProduct(Product product)
         {
-            _context.ProductsBD.Remove(product);
-            await _context.SaveChangesAsync();
+           _context.ProductsBD.Remove(product);
+           await _context.SaveChangesAsync(); 
         }
 
         public async Task<Product?> GetProductByName(string name)

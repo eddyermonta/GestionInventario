@@ -25,6 +25,33 @@ namespace GestionInventario.src.Modules.Products.Controllers
         private readonly ISupplierService _supplierService = supplierService;
         private readonly ICategoryService _categoryService = categoryService;
         
+
+         /// <summary>
+        /// Gets a product by its name.
+        /// </summary>
+        /// <param name="name">
+        ///   The name of the product to search for.
+        /// </param>
+        /// <returns>
+        ///  Successful search: 200 OK and the found product.
+        /// </returns>
+        /// <response code="404">Product not found.</response> 
+        /// <response code="400">The product name is invalid.</response> 
+        /// <response code="200">Successful search: 200 OK and the found product.</response>
+        [HttpGet("product/{name}", Name = "GetProductByName")]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetProductByName([FromRoute] string name)
+        {
+            if(!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
+            var product = await _productService.GetProductByName(name);
+            if (product == null) return NotFound(); // Devuelve 404 si no se encuentra el producto
+            return Ok(product); // Devuelve 200 y el producto
+        }
+
+
+
         /// <summary>
         ///   Adds a product to a supplier and assigns categories to the product and her movement 
         /// </summary>
@@ -57,7 +84,7 @@ namespace GestionInventario.src.Modules.Products.Controllers
             if (productResponseId == null) return BadRequest(new { message = "Error al insertar el producto." });
 
             
-            List<string> missingCategories = new List<string>();
+            List<string> missingCategories = [];
             //obtener lista de categorias verificar si existe, si existe añadir los ids
             foreach (var categoryName in productRequest.Categories)
             {
@@ -99,7 +126,7 @@ namespace GestionInventario.src.Modules.Products.Controllers
          /// <param name="name">
          ///  Name of the product to be updated
          /// </param>
-         /// <param name="productResponse">
+         /// <param name="productUpdateRequest">
          ///  Object containing the information of the product to be updated
          /// </param>
          /// <returns>
@@ -112,10 +139,10 @@ namespace GestionInventario.src.Modules.Products.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateProduct([FromRoute] string name ,[FromBody] ProductResponse productResponse)
+        public async Task<IActionResult> UpdateProduct([FromRoute] string name ,[FromBody] ProductUpdateRequest productUpdateRequest)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
-            var success = await _productService.UpdateProduct(productResponse, name);
+            var success = await _productService.UpdateProduct(productUpdateRequest, name);
             if (!success) return NotFound(); // Devuelve 404 si no se encuentra el producto
 
             return NoContent(); // Devuelve 204 si se actualiza correctamente

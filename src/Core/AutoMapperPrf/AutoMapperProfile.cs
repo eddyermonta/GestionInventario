@@ -42,8 +42,6 @@ namespace GestionInventario.src.Core.AutoMapperPrf
 
         private void CreateProductMaps()
         {
-            CreateMap<Product, ProductDto>().ReverseMap();
-            
             // Mapeo de ProductRequest a Product
             CreateMap<ProductRequest, Product>()
             .ForMember(dest => dest.ExpirationDate,

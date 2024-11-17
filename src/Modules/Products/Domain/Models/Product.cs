@@ -10,7 +10,7 @@ namespace GestionInventario.src.Modules.Products.Domain.Models
         public required string Name { get; set; }
         public required string Description { get; set; }
         public required ICollection<ProductCategory> ProductCategories  { get; set; } = [];
-        public  required int Amount { get; set; }
+        public  required int Initial_Amount { get; set; }
         public required decimal UnitPrice { get; set; } 
         public DateOnly? ExpirationDate { get; set; }
         public Mesurement? Weight { get; set; }

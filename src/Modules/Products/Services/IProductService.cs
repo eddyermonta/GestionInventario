@@ -6,7 +6,7 @@ namespace GestionInventario.src.Modules.Products.Services
         Task<ProductResponse?> GetProductByName(string name);
         Task<IEnumerable<ProductResponse>> GetAllProducts();
         Task<ProductResponseId?> AddProduct(ProductRequest productRequest, Guid supplierId);
-        Task<bool> UpdateProduct(ProductResponse productResponse, string name);
+        Task<bool> UpdateProduct(ProductUpdateRequest productUpdateRequest, string name);
         Task<bool> DeleteProduct(string name);
         
     }

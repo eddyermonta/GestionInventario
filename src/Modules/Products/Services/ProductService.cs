@@ -38,9 +38,10 @@ namespace GestionInventario.src.Modules.Products.Services
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                // Verificar si ya existe un producto con el mismo nombre ya que no se pueden repetir
                 if (await _productRepository.GetProductByName(productRequest.Name) != null) return null;
-                
                 var product = _mapper.Map<Product>(productRequest);
+               
                 product.SupplierId = supplierId;
 
                 await _productRepository.CreateProduct(product);
@@ -62,9 +63,23 @@ namespace GestionInventario.src.Modules.Products.Services
         {
             var existingProduct = await _productRepository.GetProductByName(name);
             if (existingProduct == null) return false;
-            await _productRepository.DeleteProduct(existingProduct);
-            await AddMovementReasonAsync(existingProduct, "Eliminación de producto");
-            return true;
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                await _productRepository.DeleteProduct(existingProduct);
+                await AddMovementReasonAsync(existingProduct, "Eliminación de producto");
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+
+            
+           
         }
 
         public async Task<ProductResponse?> GetProductByName(string name)
@@ -80,7 +95,7 @@ namespace GestionInventario.src.Modules.Products.Services
             return _mapper.Map<IEnumerable<ProductResponse>>(users);     
         }
 
-        public async Task<bool> UpdateProduct(ProductResponse productResponse, string name)
+        public async Task<bool> UpdateProduct(ProductUpdateRequest productUpdateRequest, string name)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -89,18 +104,8 @@ namespace GestionInventario.src.Modules.Products.Services
 
                 if (existingProduct == null) return false;
 
-                var tempAmount = existingProduct.Amount;
-                var tempUnitPrice = existingProduct.UnitPrice;
-              
-                _mapper.Map(productResponse, existingProduct);
-
-                if(existingProduct.Amount == 0 || existingProduct.UnitPrice == tempUnitPrice)
-                {
-                    existingProduct.Amount = tempAmount;
-                    existingProduct.UnitPrice = tempUnitPrice;
-                }
                 await AddMovementReasonAsync(existingProduct, "Actualización de producto");
-                await UpdateProductCategoriesAsync(existingProduct, productResponse.Categories);
+                await UpdateProductCategoriesAsync(existingProduct, productUpdateRequest.Categories);
 
 
                 await _productRepository.UpdateProduct(existingProduct);
@@ -155,7 +160,8 @@ namespace GestionInventario.src.Modules.Products.Services
              var Movementresponse = new MovementResponse(){
                 Date = DateTime.UtcNow,
                 CategoryMov = MovementCategory.entrada,
-                Amount = product.Amount,
+                Amount = product.Initial_Amount,
+                UnitPrice = product.UnitPrice,
                 Reason = reason,
                 ProductName = product.Name
             };

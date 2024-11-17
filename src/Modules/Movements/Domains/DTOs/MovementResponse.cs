@@ -7,6 +7,7 @@ namespace GestionInventario.src.Modules.Movements.Domains.DTOs
     {
         public DateTime Date { get; set; }
         public int Amount { get; set; }
+        public decimal UnitPrice { get; set; }
         public string? Reason { get; set; }
         public string? ProductName { get; set; }
         public MovementCategory CategoryMov { get; set; }

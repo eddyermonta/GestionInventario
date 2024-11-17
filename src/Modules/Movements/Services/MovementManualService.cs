@@ -1,5 +1,4 @@
 using AutoMapper;
-using GestionInventario.src.Data;
 using GestionInventario.src.Modules.Movements.Domains.DTOs;
 using GestionInventario.src.Modules.Movements.Domains.Models;
 using GestionInventario.src.Modules.Movements.Repositories;
@@ -26,7 +25,7 @@ namespace GestionInventario.src.Modules.Movements.Services
             var product = await _productRepository.GetProductByName(movementRequest.ProductName);
             if (product == null) return null;
         
-            product.Amount += movementRequest.Amount;
+            product.Initial_Amount += movementRequest.Amount;
             await _productRepository.UpdateProduct(product); // actualiza la cantidad de productos  
             var movementResponse = await AddMovement(product, movementRequest);
 
@@ -39,8 +38,8 @@ namespace GestionInventario.src.Modules.Movements.Services
             var product = await _productRepository.GetProductByName(movementRequest.ProductName);
             if (product == null) return null;
         
-            if(product.Amount < movementRequest.Amount) return null; // si la cantidad de productos es menor a la cantidad que se quiere reducir, retorna null
-            product.Amount -= movementRequest.Amount;
+            if(product.Initial_Amount < movementRequest.Amount) return null; // si la cantidad de productos es menor a la cantidad que se quiere reducir, retorna null
+            product.Initial_Amount -= movementRequest.Amount;
             await _productRepository.UpdateProduct(product); // actualiza la cantidad de productos
             var movementResponse = await AddMovement(product, movementRequest);  
 
@@ -52,7 +51,7 @@ namespace GestionInventario.src.Modules.Movements.Services
         return new MovementResponse
             {
                 Date = DateTime.UtcNow,
-                Amount = product.Amount,
+                Amount = product.Initial_Amount,
                 Reason = movementRequest.Reason,
                 ProductName = product.Name,
             };
