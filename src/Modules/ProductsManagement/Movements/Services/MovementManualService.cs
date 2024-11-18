@@ -35,6 +35,13 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Services
 
             movementResponse.ProductId = product.Id;
             movementResponse.CategoryMov = movementForm;
+
+            var movements = await _movementRepository.GetMovementsByProductId(product.Id);
+            var movementResponses = _mapper.Map<IEnumerable<MovementResponse>>(movements).OrderBy(m => m.ProductId);
+
+            var ActualAmount = _kardexCalculators.FinalAmount(movementResponses);
+
+            if(movementForm == MovementForm.salida && movementRequest.Amount > ActualAmount) return null;
             
             var movement = _mapper.Map<Movement>(movementResponse);          
             await _movementRepository.AddMovement(movement);
@@ -87,8 +94,20 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Services
                 ProductId = product.Id,
                 ProductName = product.Name,
                 Movements = movementsResponse,
-                TotalAmounts = _kardexCalculators.CalculateTotalAmounts(movementsResponse),
-                TotalPrice = _kardexCalculators.CalculateTotalPurchase(movementsResponse)
+
+                //cantidad de ventas
+                SalesAmount = _kardexCalculators.SumSales(movementsResponse,MovementForm.salida),
+                //diferencia entre entradas y salidas
+                FinalAmount = _kardexCalculators.FinalAmount(movementsResponse),
+                //total de cantidad unitaria * precio unitario
+                TotalPurchaseBalance = _kardexCalculators.TotalPurchaseBalance(movementsResponse),
+                //total saldo promedio * (diferencia entre entradas y salidas)
+                FinalBalance = _kardexCalculators.FinalBalance(
+                    _kardexCalculators.FinalAmount(movementsResponse),
+                     _kardexCalculators.AverageBalance(
+                        _kardexCalculators.SumSales(movementsResponse,MovementForm.entrada)
+                        ,_kardexCalculators.TotalPurchaseBalance(movementsResponse))),
+
             };
         }
     }

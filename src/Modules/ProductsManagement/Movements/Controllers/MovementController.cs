@@ -42,7 +42,7 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Controllers
         public async Task<IActionResult> UpdateInventory([FromRoute] MovementForm movementForm, [FromBody] MovementRequest movementRequest)
         {
             var movement = await _movementManualService.UpdateInventoryStock(movementRequest, movementForm);
-            if(movement == null) return BadRequest("Movement not created"); 
+            if(movement == null) return BadRequest("No se pudo crear el movimiento, verifique los datos ingresados"); 
             
             var product = await _productService.GetProductByName(movementRequest.ProductName);
             if (product == null) return BadRequest("Product not found");

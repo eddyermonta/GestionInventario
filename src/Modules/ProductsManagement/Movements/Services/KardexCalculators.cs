@@ -10,14 +10,14 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Services
              return totalPurchase / amountPurchase;
         }
 
-        public int CalculateTotalAmounts(IEnumerable<MovementResponse> movements)
+        public int FinalAmount(IEnumerable<MovementResponse> movements)
         {
-            var entries = TotalAmounts(movements, MovementForm.entrada);
-            var outs = TotalAmounts(movements, MovementForm.salida);
+            var entries = SumSales(movements, MovementForm.entrada);
+            var outs = SumSales(movements, MovementForm.salida);
             return entries - outs;
         }
 
-        public decimal CalculateTotalPurchase(IEnumerable<MovementResponse> movements)
+        public decimal TotalPurchaseBalance (IEnumerable<MovementResponse> movements)
         {
             return movements.Where(m => m.CategoryMov == MovementForm.entrada).Sum(m => m.Amount * m.UnitPrice);
         }
@@ -27,7 +27,7 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Services
             return totalAmounts * averageBalance;
         }
 
-        public int TotalAmounts(IEnumerable<MovementResponse> movements, MovementForm movementForm)
+        public int SumSales(IEnumerable<MovementResponse> movements, MovementForm movementForm)
         {
             return movements.Where(m => m.CategoryMov == movementForm).Sum(m => m.Amount);
         }

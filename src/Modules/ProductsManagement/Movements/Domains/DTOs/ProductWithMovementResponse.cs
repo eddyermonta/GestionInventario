@@ -7,8 +7,13 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Domains.DTO
         public Guid ProductId { get; set; }
         public string? ProductName { get; set; }
         public IEnumerable<MovementResponse>? Movements { get; set; }
-        public int TotalAmounts { get; set; }
-        public decimal TotalPrice { get; set; }
+        //kardex calculators
+        //compra
+        public int SalesAmount { get; set; }
+        public int FinalAmount { get; set; }
+        public decimal TotalPurchaseBalance { get; set; }
+        public decimal FinalBalance { get; set; }
+
     }
 
 }

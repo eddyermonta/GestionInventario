@@ -5,10 +5,14 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Services
 {
     public interface IKardexCalculators
     {
-        int TotalAmounts(IEnumerable<MovementResponse> movements, MovementForm movementForm);
-        int CalculateTotalAmounts(IEnumerable<MovementResponse> movements);
-        decimal CalculateTotalPurchase(IEnumerable<MovementResponse> movements);
         decimal AverageBalance(decimal amountPurchase, decimal totalPurchase);
+        int FinalAmount(IEnumerable<MovementResponse> movements);
+        decimal TotalPurchaseBalance (IEnumerable<MovementResponse> movements);
         decimal FinalBalance(int totalAmounts, decimal averageBalance);
+        int SumSales(IEnumerable<MovementResponse> movements, MovementForm movementForm);
+
+
+         
+
     }
 }
