@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionInventario.src.Modules.Products.Repositories
 {
-    public class ProductRepository
-    (
-        MyDbContext myDbContext
-    )
-        : IProductRepository
+    public class ProductRepository(MyDbContext myDbContext): IProductRepository
     {
         private readonly MyDbContext _context = myDbContext;
 
@@ -50,6 +46,16 @@ namespace GestionInventario.src.Modules.Products.Repositories
         {
             _context.ProductsBD.Update(product);
             await _context.SaveChangesAsync();
+        }
+
+        public Task<Product?> GetProductById(Guid id)
+        {
+            return _context.ProductsBD
+            .Include(s => s.Supplier)                 // Include supplier information
+            .ThenInclude(a => a.Address)             // Include supplier's address
+            .Include(pc => pc.ProductCategories)     // Include the product's categories
+            .ThenInclude(c => c.Category)            // Include the category details
+            .FirstOrDefaultAsync(s => s.Id == id);   // Find the product by its ID
         }
     }
 }

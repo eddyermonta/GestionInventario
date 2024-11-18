@@ -1,15 +1,21 @@
+using System.Text.Json.Serialization;
 using GestionInventario.src.Modules.Movements.Domains.Models.Enum;
-using GestionInventario.src.Modules.Products.Domain.Models;
 
 namespace GestionInventario.src.Modules.Movements.Domains.DTOs
 {
     public class MovementResponse
     {
+        public Guid Id { get; set; }
         public DateTime Date { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public MovementType Type { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public MovementForm CategoryMov { get; set; }
         public int Amount { get; set; }
         public decimal UnitPrice { get; set; }
         public string? Reason { get; set; }
-        public string? ProductName { get; set; }
-        public MovementCategory CategoryMov { get; set; }
+        public Guid? ProductId { get; set; }
+
     }
 }
+

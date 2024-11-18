@@ -3,13 +3,15 @@ using GestionInventario.src.Modules.Categories.Domain.DTOs;
 using GestionInventario.src.Modules.Categories.Domain.Models;
 using GestionInventario.src.Modules.Categories.Repositories;
 using GestionInventario.src.Modules.Products.Domain.DTOs;
+using GestionInventario.src.Modules.Suppliers.Services;
 
 namespace GestionInventario.src.Modules.Categories.Services
 {
-    public class CategoryService(ICategoryRepository categoryRepository, IMapper mapper) : ICategoryService
+    public class CategoryService(ICategoryRepository categoryRepository,ISupplierService supplierService, IMapper mapper) : ICategoryService
     {
 
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
+        private readonly ISupplierService _supplierService = supplierService;
         private readonly IMapper _mapper = mapper;
 
         public async Task<(List<CategoryResponseName> AddedCategories, List<string> ExistingCategories)> AddCategories(List<string> namesCategories)
@@ -62,9 +64,9 @@ namespace GestionInventario.src.Modules.Categories.Services
             var category = await _categoryRepository.GetProductsByCategoryName(categoryName);
             if (category == null) return new CategoryProductsResponse { Products = [] };
             
-            var products = category
-            .Select(_mapper.Map<ProductResponse>)
-            .ToList();
+            var supplierId = category.FirstOrDefault()?.SupplierId;
+            await _supplierService.GetSupplierById(supplierId?.ToString()??string.Empty);
+            var products = category.Select(_mapper.Map<ProductResponse>).ToList();
             
             return new CategoryProductsResponse
             {

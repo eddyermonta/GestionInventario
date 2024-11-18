@@ -15,6 +15,35 @@ namespace GestionInventario.src.Modules.Categories.Controllers
     {
         private readonly ICategoryService _categoryService = categoryService;
 
+         /// <summary>
+        ///  Gets the products of a category.
+        /// </summary>
+        /// <param name="categoryName">
+        ///  The name of the category.
+        /// </param>
+        /// <returns>
+        ///  Successful search: 200 OK and the list of category products.
+        /// </returns>
+        /// <response code="404">Category not found or no products.</response>
+        /// <response code="400">The category name is invalid.</response>
+        /// <response code="200">Successful search: 200 OK and the list of category products.</response>
+
+        [HttpGet("product/{categoryName}", Name = "GetProductsByCategoryName")]
+        [ProducesResponseType(typeof(CategoryProductsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetProductsByCategoryName([FromRoute] string categoryName)
+        {
+            if (string.IsNullOrWhiteSpace(categoryName))
+                return BadRequest("Category name cannot be empty."); // Devuelve 400 si el nombre de la categoría es inválido
+        
+            var categoryProductsResponse = await _categoryService.GetProductsByCategoryName(categoryName);
+
+            if (categoryProductsResponse == null || categoryProductsResponse.Products == null || categoryProductsResponse.Products.Count == 0)
+                return NotFound(); // Devuelve 404 si no se encuentra la categoría o no hay productos
+            return Ok(categoryProductsResponse); // Devuelve 200 y la lista de productos
+        }
+
         /// <summary>
         ///   Gets all categories
         /// </summary>

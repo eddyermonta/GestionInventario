@@ -58,9 +58,9 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IMovementManualService, MovementManualService>();
-builder.Services.AddScoped<IMovementSupplierService, MovementSupplierService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IKardexCalculators, KardexCalculators>();
 
 // Add repositories to the container
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -74,6 +74,7 @@ builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddSingleton<JwtToken>();
+
 
 builder.Services.AddDbContext<MyDbContext> (options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))

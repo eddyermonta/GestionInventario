@@ -10,7 +10,7 @@ namespace GestionInventario.src.Modules.Movements.Domains.Models
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
         public MovementType Type { get; set; }
-        public MovementCategory CategoryMov { get; set; }
+        public MovementForm CategoryMov { get; set; }
         public int Amount { get; set; }
         public decimal UnitPrice { get; set; }
         public required string Reason { get; set; }

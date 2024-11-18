@@ -159,19 +159,25 @@ namespace GestionInventario.src.Modules.Products.Services
         {
              var Movementresponse = new MovementResponse(){
                 Date = DateTime.UtcNow,
-                CategoryMov = MovementCategory.entrada,
+                CategoryMov = MovementForm.entrada,
                 Amount = product.Initial_Amount,
                 UnitPrice = product.UnitPrice,
                 Reason = reason,
-                ProductName = product.Name
+                ProductId = product.Id
             };
 
             var movement = _mapper.Map<Movement>(Movementresponse);
             movement.ProductId = product.Id;
             movement.Product = product;
             
-            await _movementRepository.Add(movement);     
+            await _movementRepository.AddMovement(movement);     
         }
 
+        public async Task<ProductResponse?> GetProductById(Guid productId)
+        {
+            var product = await _productRepository.GetProductById(productId);
+            if (product == null) return null;
+            return _mapper.Map<ProductResponse>(product);
+        }
     }
 }

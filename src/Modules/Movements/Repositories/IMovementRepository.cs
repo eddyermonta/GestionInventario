@@ -4,8 +4,8 @@ namespace GestionInventario.src.Modules.Movements.Repositories
 {
     public interface IMovementRepository
     {
-        Task Add(Movement movement);
-        Task<Movement> Get(int id);
-        Task<IEnumerable<Movement>> GetAll();
+        Task AddMovement(Movement movement);
+        Task<IEnumerable<Movement>> GetMovementsByProductId(Guid id);
+        Task<IEnumerable<Movement>> GetAllMovements();
     }
 }

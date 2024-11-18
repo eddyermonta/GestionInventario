@@ -13,7 +13,7 @@ namespace GestionInventario.src.Modules.Products.Domain.DTOs
         public required string Description { get; set; }
 
         [Required(ErrorMessage = "La cantidad es obligatoria.")]
-        [Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser mayor que cero.")]
+        [Range(0, int.MaxValue, ErrorMessage = "La cantidad debe ser mayor o igual a cero.")]
         public required int Initial_Amount { get; set; }
 
         [Required(ErrorMessage = "El precio unitario es obligatorio.")]

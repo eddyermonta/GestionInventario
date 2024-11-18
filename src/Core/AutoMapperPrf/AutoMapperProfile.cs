@@ -19,6 +19,7 @@ using GestionInventario.src.Modules.Users.Domains.Models;
 using GestionInventario.src.Modules.Users.Domains.Models.Enums;
 using GestionInventario.src.Modules.Users.Addresses.DTOS;
 using GestionInventario.src.Modules.Addresses.Domains.DTOS;
+using GestionInventario.src.Modules.Movements.Domains.Models.Enum;
 
 namespace GestionInventario.src.Core.AutoMapperPrf
 {
@@ -37,7 +38,16 @@ namespace GestionInventario.src.Core.AutoMapperPrf
 
         private void CreateMovementMaps()
         {
-            CreateMap<Movement, MovementResponse>().ReverseMap();
+            //mapear movementrequest en movementresponse y el productoid el date se crea
+            CreateMap<MovementRequest, MovementResponse>()
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+            
+            CreateMap<MovementResponse, Movement>().ReverseMap();
+
+            CreateMap<Movement, MovementResponse>()
+            .ForMember(dest => dest.CategoryMov, opt => opt.MapFrom(src => src.CategoryMov.ToString())) // Enum to string
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString())); // Enum to string
         }
 
         private void CreateProductMaps()

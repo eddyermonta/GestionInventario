@@ -1,30 +1,30 @@
 using GestionInventario.src.Data;
 using GestionInventario.src.Modules.Movements.Domains.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionInventario.src.Modules.Movements.Repositories
 {
-    public class MovementRepository
-    (
-        MyDbContext myDbContext
-    ) 
-        : IMovementRepository
+    public class MovementRepository( MyDbContext myDbContext) : IMovementRepository
     {
         private readonly MyDbContext _myDbContext = myDbContext;
 
-        public async Task Add(Movement movement)
+        public async Task AddMovement(Movement movement)
         {
             _myDbContext.MovementsBD.Add(movement);
             await _myDbContext.SaveChangesAsync();
         }
 
-        public async Task<Movement> Get(int id)
+        public async Task<IEnumerable<Movement>> GetMovementsByProductId(Guid id)
         {
-            return await Task.Run(() => _myDbContext.MovementsBD.FirstOrDefault(m => m.Id.Equals(id))!);
+            var movements = await Task.Run(() => 
+            _myDbContext.MovementsBD.Where(m => m.ProductId == id).ToList());
+            return movements;
         }
 
-        public Task<IEnumerable<Movement>> GetAll()
+        public async Task<IEnumerable<Movement>> GetAllMovements()
         {
-            return Task.FromResult<IEnumerable<Movement>>(_myDbContext.MovementsBD.ToList());
+            var movements = await _myDbContext.MovementsBD.Include(m => m.Product).ToListAsync();
+            return movements;
         }
     }
 }
