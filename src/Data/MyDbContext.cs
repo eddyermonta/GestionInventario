@@ -1,11 +1,12 @@
 
-using GestionInventario.src.Modules.Addresses.Domains.Models;
-using GestionInventario.src.Modules.Categories.Domain.Models;
-using GestionInventario.src.Modules.Movements.Domains.Models;
-using GestionInventario.src.Modules.ProductCategories.Domain.Model;
-using GestionInventario.src.Modules.Products.Domain.Models;
-using GestionInventario.src.Modules.Suppliers.Domains.Models;
-using GestionInventario.src.Modules.Users.Domains.Models;
+
+using GestionInventario.src.Modules.ProductsManagement.Categories.Domain.Models;
+using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.Models;
+using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Domain.Model;
+using GestionInventario.src.Modules.ProductsManagement.Products.Domain.Models;
+using GestionInventario.src.Modules.UsersRolesManagement.Addresses.Domains.Models;
+using GestionInventario.src.Modules.UsersRolesManagement.Suppliers.Domains.Models;
+using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,19 +37,20 @@ namespace GestionInventario.src.Data
                 .HasOne(pc => pc.Product)
                 .WithMany(p => p.ProductCategories)
                 .HasForeignKey(pc => pc.ProductId)
-                .OnDelete(DeleteBehavior.Cascade); // Eliminar ProductCategory si el producto es eliminado
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<ProductCategory>()
                 .HasOne(pc => pc.Category)
                 .WithMany(c => c.ProductCategories)
-                .HasForeignKey(pc => pc.CategoryId);
+                .HasForeignKey(pc => pc.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Relación uno a muchos entre Productos y Proveedores
             builder.Entity<Product>()
                 .HasOne(p => p.Supplier)
                 .WithMany(s => s.Products)
                 .HasForeignKey(p => p.SupplierId)
-                .OnDelete(DeleteBehavior.Cascade); // Establecer SupplierId en NULL si el proveedor es eliminado
+                .OnDelete(DeleteBehavior.Restrict); // No permitir eliminar un proveedor si tiene productos asociados
 
             // Relación uno a uno entre Usuarios y Direcciones
             builder.Entity<User>()
@@ -75,7 +77,7 @@ namespace GestionInventario.src.Data
             .HasMany(p => p.Movements)
             .WithOne(m => m.Product)
             .HasForeignKey(m => m.ProductId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict); // No permitir eliminar un proveedor si tiene productos asociados
 
         }
     }

@@ -1,5 +1,4 @@
-using GestionInventario.src.Modules.Users.Domains.Models;
-
+using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.Models;
 
 namespace GestionInventario.src.Core.Shared
 {

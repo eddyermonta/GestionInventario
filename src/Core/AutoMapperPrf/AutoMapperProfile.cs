@@ -1,25 +1,24 @@
 
 
 using AutoMapper;
-using GestionInventario.src.Modules.Addresses.Domains.Models;
-using GestionInventario.src.Modules.Addresses.Domains.DTOs;
-using GestionInventario.src.Modules.Categories.Domain.DTOs;
-using GestionInventario.src.Modules.Categories.Domain.Models;
-using GestionInventario.src.Modules.Movements.Domains.DTOs;
-using GestionInventario.src.Modules.Movements.Domains.Models;
-using GestionInventario.src.Modules.ProductCategories.Domain.DTOs;
-using GestionInventario.src.Modules.ProductCategories.Domain.Model;
-using GestionInventario.src.Modules.Products.Domain.DTOs;
-using GestionInventario.src.Modules.Products.Domain.Models;
-using GestionInventario.src.Modules.Suppliers.Domains.DTOs;
-using GestionInventario.src.Modules.Suppliers.Domains.Models;
-using GestionInventario.src.Modules.Users.Domains.DTOs;
-using GestionInventario.src.Modules.Users.Domains.DTOS;
-using GestionInventario.src.Modules.Users.Domains.Models;
-using GestionInventario.src.Modules.Users.Domains.Models.Enums;
-using GestionInventario.src.Modules.Users.Addresses.DTOS;
-using GestionInventario.src.Modules.Addresses.Domains.DTOS;
-using GestionInventario.src.Modules.Movements.Domains.Models.Enum;
+
+using GestionInventario.src.Modules.ProductsManagement.Categories.Domain.DTOs;
+using GestionInventario.src.Modules.ProductsManagement.Categories.Domain.Models;
+using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.DTOs;
+using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.Models;
+using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Domain.DTOs;
+using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Domain.Model;
+using GestionInventario.src.Modules.ProductsManagement.Products.Domain.DTOs;
+using GestionInventario.src.Modules.ProductsManagement.Products.Domain.Models;
+using GestionInventario.src.Modules.UsersRolesManagement.Addresses.Domains.DTOs;
+using GestionInventario.src.Modules.UsersRolesManagement.Addresses.Domains.Models;
+using GestionInventario.src.Modules.UsersRolesManagement.Suppliers.Domains.DTOs;
+using GestionInventario.src.Modules.UsersRolesManagement.Suppliers.Domains.Models;
+using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.DTOs;
+using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.DTOS;
+using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.Models;
+using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.Models.Enums;
+
 
 namespace GestionInventario.src.Core.AutoMapperPrf
 {
