@@ -19,7 +19,6 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Domain.DTOs
         [Required(ErrorMessage = "El precio unitario es obligatorio.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio unitario debe ser mayor que cero.")]
         public required decimal UnitPrice { get; set; } 
-        
         public string? ExpirationDate { get; set; }
         
         [Required(ErrorMessage = "La unidad de medida es obligatoria.")]

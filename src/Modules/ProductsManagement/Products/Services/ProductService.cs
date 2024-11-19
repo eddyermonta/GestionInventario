@@ -171,8 +171,8 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Services
              var Movementresponse = new MovementResponse(){
                 Date = DateTime.UtcNow,
                 CategoryMov = MovementForm.entrada,
-                Amount = 0,
-                UnitPrice = product.UnitPrice,
+                Amount = reason.Equals("Creación de producto")? product.Initial_Amount : 0,
+                UnitPrice = reason.Equals("Creación de producto")? product.UnitPrice : 0,
                 Reason = reason,
                 ProductId = product.Id
             };

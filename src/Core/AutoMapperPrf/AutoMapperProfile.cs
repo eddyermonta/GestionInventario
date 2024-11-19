@@ -54,8 +54,9 @@ namespace GestionInventario.src.Core.AutoMapperPrf
             // Mapeo de ProductRequest a Product
             CreateMap<ProductRequest, Product>()
             .ForMember(dest => dest.ExpirationDate,
-            opt => opt.MapFrom(src => src.ExpirationDate != null ? 
-            DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default)); // Convierte string a DateOnly
+                opt => opt.MapFrom(src => src.ExpirationDate != null 
+                        ? ParseDateOnly(src.ExpirationDate)
+                        : default)); // Convierte string a DateOnly
 
             CreateMap<Product, ProductRequest>()
             .ForMember(dest => dest.ExpirationDate,
@@ -68,7 +69,9 @@ namespace GestionInventario.src.Core.AutoMapperPrf
 
             CreateMap<ProductResponseId, Product>()
             .ForMember(dest => dest.ExpirationDate,
-            opt => opt.MapFrom(src => src.ExpirationDate != null ? DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default)); // Convierte string a DateOnly
+                opt => opt.MapFrom(src => src.ExpirationDate != null 
+                    ? ParseDateOnly(src.ExpirationDate)
+                    : default)); // Convierte string a DateOnly
         
             //mapeo para product con categorias
             CreateMap<Product, ProductResponse>()
@@ -80,7 +83,9 @@ namespace GestionInventario.src.Core.AutoMapperPrf
             
             CreateMap<ProductResponse, Product>()
             .ForMember(dest => dest.ExpirationDate,
-            opt => opt.MapFrom(src => src.ExpirationDate != null ? DateOnly.Parse(src.ExpirationDate, System.Globalization.CultureInfo.InvariantCulture) : default))
+                opt => opt.MapFrom(src => src.ExpirationDate != null 
+                    ? ParseDateOnly(src.ExpirationDate)
+                    : default))
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
            
         }
@@ -138,6 +143,11 @@ namespace GestionInventario.src.Core.AutoMapperPrf
             CreateMap<AddressUpdateRequest, Address>()
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
             
+        
+        }
+         private static DateOnly ParseDateOnly(string date)
+        {
+            return DateOnly.ParseExact(date, "d/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }

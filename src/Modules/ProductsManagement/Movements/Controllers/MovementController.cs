@@ -50,7 +50,7 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Controllers
         /// <response code="200">Returns the list of movements</response>
         ///  <response code="204">No movements found</response>
 
-        [HttpGet(Name = "GetAllMovements")]
+        [HttpGet("all",Name = "GetAllMovements")]
         [ProducesResponseType(typeof(IEnumerable<ProductWithMovementsResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> GetAllMovements()
@@ -133,6 +133,26 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Controllers
 
             // Retornar movimientos con código 200
             return Ok(movements);
+        }
+
+        /// <permission cref="System.Security.Claims.ClaimTypes.Role">ADMIN, AUXILIAR</permission>
+        /// <summary> Generates a report of all movements </summary>
+        ///  <returns> Returns a CSV file with the movements </returns>
+        ///  <response code="200">Returns a CSV file with the movements</response>
+        /// <response code="204">No movements found</response> 
+
+        [Authorize(Roles = "ADMIN, AUXILIAR")]
+        [HttpGet("report",Name = "ReportingMovements")]
+        [ProducesResponseType(typeof(IEnumerable<ProductWithMovementsResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+
+        public async Task<IActionResult> ReportingMovements(){
+            var reportBytes = await _movementManualService.GenerateReport();
+            if (reportBytes == null || reportBytes.Length == 0)
+                return NoContent(); // Devuelve un 204 si no hay datos.
+            
+            var fileName = "MovementsReport.csv";
+            return File(reportBytes, "text/csv", fileName);
         }
 
                    

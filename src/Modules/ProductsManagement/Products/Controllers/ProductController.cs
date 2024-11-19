@@ -1,3 +1,4 @@
+using System.Globalization;
 using GestionInventario.src.Modules.ProductsManagement.Categories.Services;
 using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Domain.DTOs;
 using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Services;
@@ -56,7 +57,10 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddProduct([FromBody] ProductRequest productRequest, [FromRoute] string NIT)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
+            if (!ModelState.IsValid || 
+                !DateTime.TryParseExact(productRequest.ExpirationDate, "yyyy/MM/dd", 
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out _) ) 
+                return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
 
             // Comprueba si el proveedor existe
             var supplierResponse = await _supplierService.GetSupplierByNIT(NIT);
