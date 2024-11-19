@@ -1,5 +1,6 @@
 using GestionInventario.src.Modules.ProductsManagement.Categories.Domain.DTOs;
 using GestionInventario.src.Modules.ProductsManagement.Categories.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionInventario.src.Modules.ProductsManagement.Categories.Controllers
@@ -15,15 +16,9 @@ namespace GestionInventario.src.Modules.ProductsManagement.Categories.Controller
     {
         private readonly ICategoryService _categoryService = categoryService;
 
-         /// <summary>
-        ///  Gets the products of a category.
-        /// </summary>
-        /// <param name="categoryName">
-        ///  The name of the category.
-        /// </param>
-        /// <returns>
-        ///  Successful search: 200 OK and the list of category products.
-        /// </returns>
+        /// <summary>  Gets the products of a category. </summary>
+        /// <param name="categoryName">  The name of the category. </param>
+        /// <returns>  Successful search: 200 OK and the list of category products.</returns>
         /// <response code="404">Category not found or no products.</response>
         /// <response code="400">The category name is invalid.</response>
         /// <response code="200">Successful search: 200 OK and the list of category products.</response>
@@ -44,14 +39,11 @@ namespace GestionInventario.src.Modules.ProductsManagement.Categories.Controller
             return Ok(categoryProductsResponse); // Devuelve 200 y la lista de productos
         }
 
-        /// <summary>
-        ///   Gets all categories
-        /// </summary>
-        /// <returns>
-        ///  List of categories
-        /// </returns>
+        /// <summary> Gets all categories </summary>
+        /// <returns> List of categories </returns>
         /// <response code="200">Returns the list of categories</response>
         ///  <response code="204">No categories found</response>
+        
         [HttpGet(Name = "GetAllCategories")]
         [ProducesResponseType(typeof(IEnumerable<CategoryResponseName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -63,15 +55,9 @@ namespace GestionInventario.src.Modules.ProductsManagement.Categories.Controller
             return Ok(categories); // Devuelve 200 y la lista de categoría
         }
 
-        /// <summary>
-        ///  Gets a category by its name
-        /// </summary>
-        /// <param name="nameCategory">
-        ///  Name of the category
-        /// </param>
-        /// <returns>
-        ///  Category
-        /// </returns>
+        /// <summary>Gets a category by its name </summary>
+        /// <param name="nameCategory"> Name of the category</param>
+        /// <returns> Category</returns>
         /// <response code="200">Returns the category</response>
         /// <response code="404">Category not found</response>
         /// <response code="400">Bad request</response>
@@ -88,18 +74,14 @@ namespace GestionInventario.src.Modules.ProductsManagement.Categories.Controller
             return Ok(category); // Devuelve 200 y la categoría
         }
 
-        /// <summary>
-        ///  Adds a list of categories
-        /// </summary>
-        /// <param name="categoryRequest">
-        ///  List of categories
-        /// </param>
-        /// <returns>
-        ///  List of added and existing categories
-        /// </returns>
+        /// <permission cref="System.Security.Claims.ClaimTypes.Role" name="ADMIN, AUXILIAR"></permission>
+        /// <summary>Adds a list of categories </summary>
+        /// <param name="categoryRequest"> List of categories </param>
+        /// <returns> List of added and existing categories </returns>
         /// <response code="201">Returns the list of added and existing categories</response>
         /// <response code="400">Bad request</response>
         /// <response code="404">Category not found</response>
+        [Authorize ( Roles = "ADMIN, AUXILIAR")]
         [HttpPost(Name = "AddCategories")]
         [ProducesResponseType(typeof(CategoryResponseName), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -119,21 +101,15 @@ namespace GestionInventario.src.Modules.ProductsManagement.Categories.Controller
             }
         }
 
-        /// <summary>
-        ///  Updates a category
-        /// </summary>
-        /// <param name="categoryResponseName">
-        ///  Category to update
-        /// </param>
-        /// <param name="name">
-        ///  Name of the category
-        ///</param>
-        /// <returns>
-        ///  category updated
-        /// </returns>
+        /// <permission cref="System.Security.Claims.ClaimTypes.Role" name="ADMIN"></permission>
+        /// <summary> Updates a category </summary>
+        /// <param name="categoryResponseName">  Category to update</param>
+        /// <param name="name"> Name of the category</param>
+        /// <returns> category updated</returns>
         ///  <response code="204">Category updated</response>
         ///  <response code="404">Category not found</response>
-        ///  <response code="400">Bad request</response>    
+        ///  <response code="400">Bad request</response>  
+        [Authorize (Roles = "ADMIN")]
         [HttpPut("{name}",Name = "UpdateCategory")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -147,16 +123,13 @@ namespace GestionInventario.src.Modules.ProductsManagement.Categories.Controller
             return NoContent(); // Devuelve 204
         }
         
-        /// <summary>
-        ///  Elimina una categoría
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns>
-        ///  No content
-        /// </returns>
+        /// <permission cref="System.Security.Claims.ClaimTypes.Role" name="ADMIN"></permission>
+        /// <summary>Elimina una categoría </summary>
+        /// <param name="name"></param> <returns> No content </returns>
         /// <response code="204">Category deleted</response>
         /// <response code="404">Category not found</response>
         /// <response code="400">Bad request</response>
+        [Authorize (Roles = "ADMIN")] 
         [HttpDelete("{name}",Name = "DeleteCategory")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

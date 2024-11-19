@@ -4,7 +4,6 @@ using GestionInventario.src.Modules.ProductsManagement.Categories.Domain.Models;
 using GestionInventario.src.Modules.ProductsManagement.Categories.Repositories;
 using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Repositories;
 using GestionInventario.src.Modules.ProductsManagement.Products.Domain.DTOs;
-using GestionInventario.src.Modules.ProductsManagement.Products.Repositories;
 using GestionInventario.src.Modules.UsersRolesManagement.Suppliers.Services;
 
 namespace GestionInventario.src.Modules.ProductsManagement.Categories.Services

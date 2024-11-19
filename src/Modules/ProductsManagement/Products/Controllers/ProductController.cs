@@ -4,6 +4,7 @@ using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Service
 using GestionInventario.src.Modules.ProductsManagement.Products.Domain.DTOs;
 using GestionInventario.src.Modules.ProductsManagement.Products.Services;
 using GestionInventario.src.Modules.UsersRolesManagement.Suppliers.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
@@ -11,14 +12,7 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
     
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController
-    (
-        IProductService productService,
-        ISupplierService supplierService,
-        IProductCategoryService productCategoryService,
-        ICategoryService categoryService
-    ) 
-        : ControllerBase
+    public class ProductController(IProductService productService, ISupplierService supplierService, IProductCategoryService productCategoryService, ICategoryService categoryService) : ControllerBase
     {
         private readonly IProductService _productService = productService;
         private readonly IProductCategoryService _productCategoryService = productCategoryService; 
@@ -26,18 +20,13 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
         private readonly ICategoryService _categoryService = categoryService;
         
 
-         /// <summary>
-        /// Gets a product by its name.
-        /// </summary>
-        /// <param name="name">
-        ///   The name of the product to search for.
-        /// </param>
-        /// <returns>
-        ///  Successful search: 200 OK and the found product.
-        /// </returns>
+        /// <summary> Gets a product by its name.</summary>
+        /// <param name="name"> The name of the product to search for.</param>
+        /// <returns>  Successful search: 200 OK and the found product.</returns>
         /// <response code="404">Product not found.</response> 
         /// <response code="400">The product name is invalid.</response> 
         /// <response code="200">Successful search: 200 OK and the found product.</response>
+        
         [HttpGet("product/{name}", Name = "GetProductByName")]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -51,22 +40,16 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
         }
 
 
-
-        /// <summary>
-        ///   Adds a product to a supplier and assigns categories to the product and her movement 
-        /// </summary>
-        /// <param name="productRequest">
-        ///  Object containing the information of the product to be added
-        /// </param>
-        /// <param name="NIT">
-        ///  NIT of the supplier to which the product will be added
-        /// </param>
-        /// <returns>
-        ///  Returns the added product
-        /// </returns>
+        /// <permission cref="System.Security.Claims.ClaimTypes.Role">AUXILIAR, ADMIN</permission>
+        /// <summary> Adds a product to a supplier and assigns categories to the product and her movement  </summary>
+        /// <param name="productRequest">Object containing the information of the product to be added </param>
+        /// <param name="NIT">  NIT of the supplier to which the product will be added </param>
+        /// <returns> Returns the added product </returns>
         /// <response code="201">Returns the added product</response>
         /// <response code="400">The supplier was not found</response>
         /// <response code="404">The product cannot be inserted</response>
+         
+        [Authorize(Roles = "AUXILIAR, ADMIN")]
         [HttpPost ("{NIT}",Name = "AddProduct")]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -99,7 +82,6 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
                     productResponseId.Categories.Add(categoryName);
                 }
             }
-
             //mensaje categorias faltantes
             if(missingCategories.Count > 0)
             
@@ -119,22 +101,16 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
             return await _productCategoryService.AddProductCategory(productCategoryRequest);
 
         }
-
-         /// <summary>
-         ///  Updates a product
-         /// </summary>
-         /// <param name="name">
-         ///  Name of the product to be updated
-         /// </param>
-         /// <param name="productUpdateRequest">
-         ///  Object containing the information of the product to be updated
-         /// </param>
-         /// <returns>
-         ///  Returns 204 if the product is updated correctly
-         /// </returns>  
-         /// <response code="204">Returns 204 if the product is updated correctly</response>
-         /// <response code="400">The product was not found</response>
-         /// <response code="404">The product cannot be updated</response> 
+        /// <permission cref="System.Security.Claims.ClaimTypes.Role">ADMIN</permission>
+        /// <summary> Updates a product</summary>
+        /// <param name="name"> Name of the product to be updated </param>
+        /// <param name="productUpdateRequest"> Object containing the information of the product to be updated </param>
+        /// <returns> Returns 204 if the product is updated correctly </returns>  
+        /// <response code="204">Returns 204 if the product is updated correctly</response>
+        /// <response code="400">The product was not found</response>
+        /// <response code="404">The product cannot be updated</response> 
+        
+        [Authorize(Roles = "ADMIN")]
         [HttpPut("{name}",Name = "UpdateProduct")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -148,19 +124,15 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
             return NoContent(); // Devuelve 204 si se actualiza correctamente
         }
 
-        /// <summary>
-        ///  deletes a product
-        /// </summary>
-        /// <param name="name">
-        ///  Name of the product to be deleted
-        /// </param>
-        /// <returns>
-        ///  Returns 204 if the product is deleted correctly
-        /// </returns>
+        /// <permission cref="System.Security.Claims.ClaimTypes.Role">ADMIN</permission>
+        /// <summary> deletes a product </summary>
+        /// <param name="name">  Name of the product to be deleted </param>
+        /// <returns> Returns 204 if the product is deleted correctly</returns>
         /// <response code="204">Returns 204 if the product is deleted correctly</response>
         /// <response code="404">Returns 404 if the product is not found</response>
         /// <response code="400">Returns 400 if the model is not valid</response>
 
+        [Authorize(Roles = "ADMIN")]
         [HttpDelete("{name}",Name = "DeleteProduct")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -174,12 +146,8 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
             return NoContent(); // Devuelve 204 si se elimina correctamente
         }
 
-        /// <summary>
-        ///  Gets all products.
-        /// </summary>
-        /// <returns>
-        ///  Successful search: 200 OK and the list of products.
-        /// </returns>
+        /// <summary> Gets all products.</summary>
+        /// <returns>  Successful search: 200 OK and the list of products.</returns>
         /// <response code="204">No products found.</response> 
         /// <response code="200">Successful search: 200 OK and the list of products.</response>
         

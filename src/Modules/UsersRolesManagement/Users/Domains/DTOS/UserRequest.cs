@@ -3,6 +3,7 @@ namespace GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.DTOs;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using GestionInventario.src.Modules.UsersRolesManagement.Addresses.Domains.DTOs;
+using GestionInventario.src.Modules.UsersRolesManagement.Roles.Dtos;
 using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.Models.Enums;
 
 public class UserRequest {
@@ -38,6 +39,5 @@ public class UserRequest {
     [Required(ErrorMessage = "The password is required")]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
         ErrorMessage = "The password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character")]
-    public required string Password { get; set; } 
-
+    public required string Password { get; set; }
 }

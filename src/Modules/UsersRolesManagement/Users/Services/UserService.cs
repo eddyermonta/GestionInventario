@@ -1,6 +1,7 @@
 using AutoMapper;
 using GestionInventario.src.Modules.UsersRolesManagement.Addresses.Domains.Models;
 using GestionInventario.src.Modules.UsersRolesManagement.Addresses.Services;
+using GestionInventario.src.Modules.UsersRolesManagement.Roles.Dtos;
 using GestionInventario.src.Modules.UsersRolesManagement.Roles.Services;
 using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.DTOs;
 using GestionInventario.src.Modules.UsersRolesManagement.Users.Domains.DTOS;
@@ -23,7 +24,7 @@ namespace GestionInventario.src.Modules.UsersRolesManagement.Users.Services
         private readonly IMapper _mapper = mapper;
 
 
-        public async Task<UserResponse?> AddUser(UserRequest userRequest)
+        public async Task<UserResponse?> AddUser(UserRequest userRequest, RoleRequest roleRequest)
         {
             try
             {
@@ -48,7 +49,7 @@ namespace GestionInventario.src.Modules.UsersRolesManagement.Users.Services
                 }
 
                 //asignar rol y validar éxito
-                if (!await AssignRole(newUser,"ADMIN")){
+                if (!await AssignRole(newUser,roleRequest.ToString())){
                     throw new ArgumentException("The role could not be assigned.");
                 }
             

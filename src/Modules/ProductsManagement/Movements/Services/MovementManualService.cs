@@ -28,7 +28,7 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Services
             return movementResponse;
         }
 
-        private async Task<MovementResponse> AddMovement(Product product, MovementRequest movementRequest, MovementForm movementForm)
+        private async Task<MovementResponse?> AddMovement(Product product, MovementRequest movementRequest, MovementForm movementForm)
         {
 
             var movementResponse = _mapper.Map<MovementResponse>(movementRequest);

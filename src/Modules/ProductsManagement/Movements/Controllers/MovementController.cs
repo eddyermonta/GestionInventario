@@ -4,38 +4,28 @@ using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.Models.
 using GestionInventario.src.Modules.ProductsManagement.Movements.Services;
 using GestionInventario.src.Modules.ProductsManagement.Products.Domain.Models;
 using GestionInventario.src.Modules.ProductsManagement.Products.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionInventario.src.Modules.ProductsManagement.Movements.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MovementController(
-        IMovementManualService movementManualService,
-        IProductService productService,
-        IMapper mapper
-        
-        ) : ControllerBase
+    public class MovementController( IMovementManualService movementManualService, IProductService productService, IMapper mapper) : ControllerBase
     {
         private readonly IMovementManualService _movementManualService = movementManualService;
         private readonly IProductService _productService = productService;
         private readonly IMapper _mapper = mapper;
   
-        /// <summary>
-        /// Updates the inventory of products.
-        /// </summary>
-        /// <param name="movementForm">
-        ///  The category of the movement (entry or exit).
-        ///  </param>
-        ///  <param name="movementRequest">
-        ///  The information of the movement.
-        ///   </param>
-        ///  <returns>
-        ///  Successful update: 200 OK and a success message.
-        ///  </returns>
+        /// <permission cref="System.Security.Claims.ClaimTypes.Role"> ADMIN, AUXILIAR </permission>
+        /// <summary> Updates the inventory of products. </summary>
+        /// <param name="movementForm"> The category of the movement (entry or exit). </param>
+        ///  <param name="movementRequest">The information of the movement. </param>
+        ///  <returns> Successful update: 200 OK and a success message. </returns>
         ///  <response code="400">The movement type is invalid.</response>
         ///  <response code="200">Successful update: 200 OK and a success message.</response>
-        
+       
+        [Authorize(Roles = "AUXILIAR, ADMIN")]
         [HttpPut("{movementForm}", Name = "UpdateInventory")]
         [ProducesResponseType(typeof(ProductWithMovementsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -55,14 +45,11 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Controllers
             return Ok(productWithMovements);
         } 
 
-        /// <summary>
-        ///   Gets all movements
-        /// </summary>
-        /// <returns>
-        ///  List movements
-        /// </returns>
+        /// <summary> Gets all movements </summary>
+        /// <returns> List movements </returns>
         /// <response code="200">Returns the list of movements</response>
         ///  <response code="204">No movements found</response>
+
         [HttpGet(Name = "GetAllMovements")]
         [ProducesResponseType(typeof(IEnumerable<ProductWithMovementsResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -74,15 +61,15 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Controllers
             return Ok(movements); // Devuelve 200 y la lista de categoría
         }
 
-
-        /// <summary>
-        /// Retrieves the movements of a product by its name.
-        /// </summary>
+        
+        /// <summary>Retrieves the movements of a product by its name. </summary>
         /// <param name="nameProduct">Name of the product</param>
         /// <returns>List of movements associated with the product</returns>
         /// <response code="200">Returns the list of movements</response>
         /// <response code="404">The product or its movements were not found</response>
         /// <response code="400">Invalid request</response>
+        
+        
         [HttpGet("{nameProduct}", Name = "GetMovementsByProductName")]
         [ProducesResponseType(typeof(IEnumerable<ProductWithMovementsResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -112,14 +99,13 @@ namespace GestionInventario.src.Modules.ProductsManagement.Movements.Controllers
             return Ok(movements);
         }
 
-        /// <summary>
-        /// Retrieves the movements of a product by its name.
-        /// </summary>
+        /// <summary> Retrieves the movements of a product by its name. </summary>
         /// <param name="idProduct">Id of the product</param>
         /// <returns>List of movements associated with the product</returns>
         /// <response code="200">Returns the list of movements</response>
         /// <response code="404">The product or its movements were not found</response>
         /// <response code="400">Invalid request</response>
+   
         [HttpGet("/Movement/{idProduct}", Name = "GetMovementsByProductId")]
         [ProducesResponseType(typeof(IEnumerable<ProductWithMovementsResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
