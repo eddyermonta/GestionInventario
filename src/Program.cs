@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using GestionInventario.src.Modules.Notifications.Alerts.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,7 +75,7 @@ builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddSingleton<JwtToken>();
-
+builder.Services.AddHostedService<StockAlertBackgroundService>();
 
 builder.Services.AddDbContext<MyDbContext> (options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))

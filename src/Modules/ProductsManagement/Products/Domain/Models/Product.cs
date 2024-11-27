@@ -14,7 +14,8 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Domain.Model
         public required decimal UnitPrice { get; set; } 
         public DateOnly? ExpirationDate { get; set; }
         public Mesurement? Weight { get; set; }
-        
+        public int MinStock { get; set; }
+        public int MaxStock { get; set; }
         //foreign key for supplier        
         public Guid SupplierId { get; set; }
         public required Supplier Supplier { get; set; }
