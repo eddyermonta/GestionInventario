@@ -30,6 +30,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using GestionInventario.src.Modules.Notifications.Alerts.Services;
+using GestionInventario.src.Modules.Notifications.Alerts.Domain.Dtos;
+using GestionInventario.src.Modules.Notifications.Alerts.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +64,7 @@ builder.Services.AddScoped<IMovementManualService, MovementManualService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IKardexCalculators, KardexCalculators>();
+builder.Services.AddScoped<IStockAlertService,StockAlertService>();
 
 // Add repositories to the container
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -73,9 +76,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IAlertRepository,AlertRepository>();
 
 builder.Services.AddSingleton<JwtToken>();
 builder.Services.AddHostedService<StockAlertBackgroundService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddDbContext<MyDbContext> (options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -128,7 +133,10 @@ builder.Services.AddDefaultIdentity<User>(options =>{
 
 builder.Configuration.AddJsonFile("Properties/appsettings.BDD.json", optional: true, reloadOnChange: true);
 
+
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme   = JwtBearerDefaults.AuthenticationScheme;
@@ -163,9 +171,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("BDD"))
 {
-     app.UseDeveloperExceptionPage();
-     app.UseSwagger();
-     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
 }
 
 app.UseCors("*");

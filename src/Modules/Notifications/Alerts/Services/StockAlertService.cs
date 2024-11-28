@@ -1,29 +1,42 @@
+using GestionInventario.src.Modules.Notifications.Alerts.Domain.Dtos;
 using GestionInventario.src.Modules.Notifications.Alerts.Domain.Models;
 using GestionInventario.src.Modules.Notifications.Alerts.Repositories;
 using GestionInventario.src.Modules.ProductsManagement.Movements.Repositories;
 using GestionInventario.src.Modules.ProductsManagement.Products.Repositories;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.Extensions.Options;
 
 namespace GestionInventario.src.Modules.Notifications.Alerts.Services
 {
-    public class StockAlertService (IEmailService emailService, IMovementRepository movementRepository, IAlertRepository alertRepository, IProductRepository productRepository) : IStockAlertService
+    public class StockAlertService (
+        IEmailService emailService, IMovementRepository movementRepository, IAlertRepository alertRepository, IProductRepository productRepository, IOptions<EmailSettings> emailSettings
+        ) : IStockAlertService
     {
         private readonly IEmailService _emailService = emailService;
         private readonly IMovementRepository _movementRepository = movementRepository;
         private readonly IAlertRepository _alertRepository = alertRepository;
         private readonly IProductRepository _productRepository = productRepository;
+        private readonly EmailSettings _emailSettings = emailSettings.Value;
+
 
         public async Task CheckAndNotifyLowStockAsync()
         {
-             var lowStockProducts = await GetLowStockProductsAsync();
+            var lowStockProducts = await GetLowStockProductsAsync();
 
-            foreach (var alert in lowStockProducts)
+            /*foreach (var alert in lowStockProducts)
             {
                 // Notificar por correo
                 var subject = $"Alerta de stock bajo para el producto {alert.ProductId}";
                 var body = $"El producto {alert.ProductId} tiene un stock actual de {alert.CurrentStock}, " +
                         $"por debajo del mínimo permitido de .";
                 await _emailService.SendEmailAsync("admin@company.com", subject, body);
-            }
+            }*/
+            if(_emailSettings.Email == null)
+                Console.WriteLine("emain nulo");
+            else await _emailService.SendEmailAsync(_emailSettings.Email, "test", "esta es una prueba");
+            
+
+            
         }
 
         public Task<IEnumerable<StockAlert>> GetActiveAlertsAsync()
@@ -33,7 +46,8 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
 
         public async Task<IEnumerable<StockAlert>> GetLowStockProductsAsync()
         {
-             var movements = await _movementRepository.GetAllMovements();
+            var movements = await _movementRepository.GetAllMovements();
+        
 
             // Agrupar movimientos por producto y calcular cantidad total
             var stockLevels = movements
@@ -41,8 +55,8 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
                 .Select(g => new
                 {
                     ProductId = g.Key,
-                    CurrentStock = g.Sum(m => m.MovementType == MovementType.Entrada ? m.Quantity : -m.Quantity),
-                    MinimumStock = g.FirstOrDefault()?.MinimumStock ?? 0 // Si cada movimiento tiene esta info
+                    CurrentStock = 10,//g.Sum(m => m.MovementType == MovementType.Entrada ? m.Quantity : -m.Quantity),
+                    MinimumStock = 3 // Si cada movimiento tiene esta info
                 });
 
             // Filtrar productos con stock por debajo del mínimo
@@ -50,19 +64,23 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
                 .Where(s => s.CurrentStock < s.MinimumStock)
                 .Select(s => new StockAlert
                 {
-                    ProductId = s.ProductId,
+                    ProductId = 1,
                     CurrentStock = s.CurrentStock,
                     MinimumStock = s.MinimumStock,
-                    AlertGeneratedAt = DateTime.UtcNow
+                    AlertDate = DateTime.UtcNow
                 })
                 .ToList();
+                
         }
 
         public async Task<bool> ResolveAlertAsync(int alertId)
         {
              // Obtener alerta
-            var alert = await _alertRepository.GetByIdAsync(alertId) ?? throw new Exception("Alert not found");
+            await _alertRepository.GetAlertsByProductIdAsync(alertId);
+            return true;
+            //var alert = await _alertRepository.GetAllAlertsAsync(alertId) ?? throw new Exception("Alert not found");
 
+            /*
             // Consultar producto asociado
             var product = await _productRepository.GetByIdAsync(alert.ProductId) ?? throw new Exception("Product not found");
 
@@ -93,6 +111,7 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
             var emailContent = $"Se ha generado un pedido automático para el producto {product.Name}. " +
                             $"Cantidad: {cantidadAPedir}. Proveedor: {product.SupplierName}.";
             await _emailService.SendEmailAsync("admin@tuempresa.com", "Pedido Automático Generado", emailContent);
+            */
         }
     }
 }
