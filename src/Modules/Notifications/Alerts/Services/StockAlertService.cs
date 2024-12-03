@@ -1,117 +1,160 @@
+using AutoMapper;
 using GestionInventario.src.Modules.Notifications.Alerts.Domain.Dtos;
-using GestionInventario.src.Modules.Notifications.Alerts.Domain.Models;
 using GestionInventario.src.Modules.Notifications.Alerts.Repositories;
 using GestionInventario.src.Modules.ProductsManagement.Movements.Repositories;
+using GestionInventario.src.Modules.ProductsManagement.Movements.Services;
 using GestionInventario.src.Modules.ProductsManagement.Products.Repositories;
-using Microsoft.CodeAnalysis.Options;
+using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.DTOs;
 using Microsoft.Extensions.Options;
+using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.Models.Enum;
 
 namespace GestionInventario.src.Modules.Notifications.Alerts.Services
 {
     public class StockAlertService (
-        IEmailService emailService, IMovementRepository movementRepository, IAlertRepository alertRepository, IProductRepository productRepository, IOptions<EmailSettings> emailSettings
+        IEmailService emailService,
+        IAlertRepository alertRepository,
+        IOptions<EmailSettings> emailSettings,
+        IMovementRepository movementRepository,
+        IKardexCalculators kardexCalculators,
+        IProductRepository productRepository,
+        IMovementManualService movementManualService,
+        IMapper mapper
         ) : IStockAlertService
     {
         private readonly IEmailService _emailService = emailService;
-        private readonly IMovementRepository _movementRepository = movementRepository;
         private readonly IAlertRepository _alertRepository = alertRepository;
-        private readonly IProductRepository _productRepository = productRepository;
+        private readonly IKardexCalculators _kardexCalculators = kardexCalculators;
         private readonly EmailSettings _emailSettings = emailSettings.Value;
-
+        private readonly IMovementRepository _movementRepository = movementRepository;
+        private readonly IMovementManualService _movementManualService = movementManualService;
+        private readonly IProductRepository _productRepository = productRepository;
+        private readonly IMapper _mapper = mapper;
 
         public async Task CheckAndNotifyLowStockAsync()
         {
             var lowStockProducts = await GetLowStockProductsAsync();
-
-            /*foreach (var alert in lowStockProducts)
+            if (lowStockProducts == null || !lowStockProducts.Any())
             {
-                // Notificar por correo
-                var subject = $"Alerta de stock bajo para el producto {alert.ProductId}";
-                var body = $"El producto {alert.ProductId} tiene un stock actual de {alert.CurrentStock}, " +
-                        $"por debajo del mínimo permitido de .";
-                await _emailService.SendEmailAsync("admin@company.com", subject, body);
-            }*/
-            if(_emailSettings.Email == null)
-                Console.WriteLine("emain nulo");
-            else await _emailService.SendEmailAsync(_emailSettings.Email, "test", "esta es una prueba");
+                return;
+            }
             
+            // Para evitar conflictos de concurrencia con el DbContext, procesamos de forma secuencial
+            foreach (var alert in lowStockProducts)
+            {
+                // Verificar si la alerta no ha sido resuelta
+                if (!alert.IsResolved)
+                {
+                    // Obtener el producto completo de manera secuencial para evitar el uso concurrente del DbContext
+                    var product = await _productRepository.GetProductById(alert.ProductId);
 
-            
+                    // Asegurarse de que el producto exista
+                    if (product != null)
+                    {
+                        var subject = $"Alerta de stock bajo para el producto {product.Name}";
+                        var body = $"El producto {product.Name} tiene un stock actual de {alert.CurrentStock}, " +
+                                $"por debajo del mínimo permitido de {alert.MinimumStock}. " +
+                                $"Por favor, tome las acciones necesarias.";
+
+                        // Enviar correo con la información de la alerta
+                        await _emailService.SendEmailAsync(_emailSettings.Email ?? "eduardo.montano@utp.edu.co", subject, body);
+                    }
+                }
+            }
         }
 
-        public Task<IEnumerable<StockAlert>> GetActiveAlertsAsync()
+
+        public async Task<IEnumerable<StockAlertResponse>> GetAlertsByStatusAsync()
         {
-            throw new NotImplementedException();
+             // Obtener todas las alertas que no han sido resueltas (IsResolved == false)
+            var activeAlerts = await _alertRepository.GetAlertsByStatusAsync(false);
+
+            // Mapear las alertas a StockAlertResponse (si es necesario)
+            var activeAlertResponses = _mapper.Map<IEnumerable<StockAlertResponse>>(activeAlerts);
+
+            return activeAlertResponses;
         }
 
-        public async Task<IEnumerable<StockAlert>> GetLowStockProductsAsync()
+        public async Task<IEnumerable<StockAlertResponse>?> GetLowStockProductsAsync()
         {
             var movements = await _movementRepository.GetAllMovements();
-        
 
-            // Agrupar movimientos por producto y calcular cantidad total
-            var stockLevels = movements
-                .GroupBy(m => m.ProductId)
-                .Select(g => new
-                {
-                    ProductId = g.Key,
-                    CurrentStock = 10,//g.Sum(m => m.MovementType == MovementType.Entrada ? m.Quantity : -m.Quantity),
-                    MinimumStock = 3 // Si cada movimiento tiene esta info
-                });
+            // Calcular productos de bajo stock
+            var stockLevels = new List<StockAlertResponse>();
 
-            // Filtrar productos con stock por debajo del mínimo
-            return stockLevels
-                .Where(s => s.CurrentStock < s.MinimumStock)
-                .Select(s => new StockAlert
+            foreach (var g in movements.GroupBy(m => m.ProductId))
+            {
+                var product = g.Key.HasValue ? await _productRepository.GetProductById(g.Key.Value) : null;
+
+                if (product == null) continue;
+
+                var finalAmount = _kardexCalculators.FinalAmount(_mapper.Map<IEnumerable<MovementResponse>>(g));
+
+                if (finalAmount < product.MinimumStock)
                 {
-                    ProductId = 1,
-                    CurrentStock = s.CurrentStock,
-                    MinimumStock = s.MinimumStock,
-                    AlertDate = DateTime.UtcNow
-                })
-                .ToList();
-                
+                    stockLevels.Add(new StockAlertResponse 
+                    {
+                        ProductId = g.Key.HasValue ? g.Key.Value : Guid.Empty,
+                        AlertDate = DateTime.UtcNow,
+                        IsResolved = false,
+                        IsConfirmed = false,
+                        ResolvedDate = null,
+                        CurrentStock = finalAmount,
+                        MinimumStock = product.MinimumStock,
+                    });
+                }
+            }
+
+            return stockLevels;
         }
+
 
         public async Task<bool> ResolveAlertAsync(int alertId)
         {
-             // Obtener alerta
-            await _alertRepository.GetAlertsByProductIdAsync(alertId);
-            return true;
-            //var alert = await _alertRepository.GetAllAlertsAsync(alertId) ?? throw new Exception("Alert not found");
+            // Paso 1: Obtener la alerta por su ID
+            var alert = await _alertRepository.GetAlertByIdAsync(alertId) ?? throw new KeyNotFoundException($"No se encontró una alerta con el ID {alertId}.");
 
-            /*
-            // Consultar producto asociado
-            var product = await _productRepository.GetByIdAsync(alert.ProductId) ?? throw new Exception("Product not found");
+            // Paso 2: Verificar si la alerta ya fue resuelta
+            if (alert.IsResolved)  return false;
 
-            // Calcular cantidad a pedir
-            var stockActual = await _movementRepository.GetStockByProductIdAsync(product.Id);
-            var cantidadAPedir = product.MaxStock - stockActual;
+            // Paso 3: Obtener el producto asociado a la alerta
+            var product = await _productRepository.GetProductById(alert.ProductId) ?? throw new KeyNotFoundException($"No se encontró un producto con el ID {alert.ProductId}.");
 
-            if (cantidadAPedir <= 0)
-                throw new Exception("No es necesario realizar un pedido. El stock está dentro del rango permitido.");
+            // Paso 4: Obtener los movimientos y calcular las métricas con el método existente
+            var productWithMovements = _movementManualService.GetMovementsByProductId(product);
+            var movements = await productWithMovements ?? [];
+            var finalAmount = movements.FirstOrDefault()?.FinalAmount ?? 0;
 
-            // Crear pedido
-            var pedido = new Pedido
+            // Paso 5: Calcular la cantidad necesaria para reabastecer
+            var stockToOrder = product.MaximumStock - finalAmount;
+            if (stockToOrder <= 0)
             {
-                ProductId = product.Id,
-                Quantity = cantidadAPedir,
-                SupplierId = product.SupplierId,
-                Status = PedidoStatus.Pendiente,
-                CreatedAt = DateTime.UtcNow
-            };
-            await _pedidoRepository.AddAsync(pedido);
+                throw new InvalidOperationException($"El stock actual ya está en el máximo permitido o por encima.");
+            }
 
-            // Actualizar alerta como resuelta
-            alert.Status = AlertStatus.Resuelta;
-            alert.ResolvedAt = DateTime.UtcNow;
-            await _alertRepository.UpdateAsync(alert);
+            // Usar el método existente para agregar el movimiento
+           await _movementRepository.AddMovement
+           (new() {
+                        Id = Guid.NewGuid(),
+                        Date = DateTime.UtcNow,
+                        Type = MovementType.SupplierReceipt,
+                        CategoryMov = MovementForm.entrada,
+                        Amount = stockToOrder,
+                        UnitPrice = product.UnitPrice,
+                        Reason = "Compra a provedor para reabastecimiento",
+                        ProductId = product.Id,
+                        Product = product
+                    });
+                        
 
-            // Notificar por correo
-            var emailContent = $"Se ha generado un pedido automático para el producto {product.Name}. " +
-                            $"Cantidad: {cantidadAPedir}. Proveedor: {product.SupplierName}.";
-            await _emailService.SendEmailAsync("admin@tuempresa.com", "Pedido Automático Generado", emailContent);
-            */
+
+            // Paso 7: Actualizar la alerta como resuelta
+            alert.IsResolved = true;
+            alert.ResolvedDate = DateTime.UtcNow;
+            await _alertRepository.UpdateAlertAsync(alert);
+
+            // Paso 8: Retornar éxito
+            return true;
         }
+
     }
 }

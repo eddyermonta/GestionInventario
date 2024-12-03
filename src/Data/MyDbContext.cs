@@ -1,5 +1,6 @@
 
 
+using GestionInventario.src.Modules.Notifications.Alerts.Domain.Models;
 using GestionInventario.src.Modules.ProductsManagement.Categories.Domain.Models;
 using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.Models;
 using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Domain.Model;
@@ -20,6 +21,7 @@ namespace GestionInventario.src.Data
         public required DbSet<Category> CategoriesBD { get; set; }
         public required DbSet<ProductCategory> ProductCategoriesBD { get; set; }
         public required DbSet<Movement> MovementsBD { get; set; }
+        public required DbSet<StockAlert> StockAlertsBD { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){
             if (!optionsBuilder.IsConfigured) optionsBuilder.UseNpgsql();
@@ -28,6 +30,14 @@ namespace GestionInventario.src.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // Relación muchos a uno entre Alerts y Product
+            builder.Entity<StockAlert>()
+                .HasOne(a => a.Product) // Cada alerta está asociada a un producto
+                .WithMany(p => p.StockAlerts) // Un producto puede tener varias alertas
+                .HasForeignKey(a => a.ProductId) // Clave foránea en Alert
+                .OnDelete(DeleteBehavior.Restrict); // Evitar eliminar productos si tienen alertas asociadas
+
 
             // Relación muchos a muchos entre Productos y Categorías
             builder.Entity<ProductCategory>()

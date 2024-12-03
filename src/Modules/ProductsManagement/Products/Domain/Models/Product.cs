@@ -1,4 +1,5 @@
 
+using GestionInventario.src.Modules.Notifications.Alerts.Domain.Models;
 using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.Models;
 using GestionInventario.src.Modules.ProductsManagement.ProductCategories.Domain.Model;
 using GestionInventario.src.Modules.UsersRolesManagement.Suppliers.Domains.Models;
@@ -14,12 +15,15 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Domain.Model
         public required decimal UnitPrice { get; set; } 
         public DateOnly? ExpirationDate { get; set; }
         public Mesurement? Weight { get; set; }
-        public int MinStock { get; set; }
-        public int MaxStock { get; set; }
+        public int MaximumStock { get; set;}
+        public int MinimumStock {get; set; }
+
+
         //foreign key for supplier        
         public Guid SupplierId { get; set; }
         public required Supplier Supplier { get; set; }
         public virtual ICollection<Movement> Movements { get; set; } = [];
+         public virtual ICollection<StockAlert> StockAlerts { get; set; } = [];
     
     }
 }

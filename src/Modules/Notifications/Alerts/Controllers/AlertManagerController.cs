@@ -18,10 +18,10 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Controllers
             return Ok();
         }
 
-        [HttpGet("getActiveAlerts")]
-        public async Task<IActionResult> GetActiveAlerts()
+        [HttpGet("GetAlertsByStatus")]
+        public async Task<IActionResult> GetAlertsByStatus()
         {
-            var alerts = await _stockAlertService.GetActiveAlertsAsync();
+            var alerts = await _stockAlertService.GetAlertsByStatusAsync();
             if (!alerts.Any())
                 return NoContent();
 

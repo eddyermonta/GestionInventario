@@ -64,7 +64,13 @@ builder.Services.AddScoped<IMovementManualService, MovementManualService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IKardexCalculators, KardexCalculators>();
-builder.Services.AddScoped<IStockAlertService,StockAlertService>();
+
+builder.Services.AddHostedService<StockAlertBackgroundService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+builder.Services.AddScoped<IStockAlertService, StockAlertService>();
+
+
 
 // Add repositories to the container
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -76,11 +82,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IAlertRepository,AlertRepository>();
+builder.Services.AddScoped<IAlertRepository, AlertRepository>();
 
 builder.Services.AddSingleton<JwtToken>();
-builder.Services.AddHostedService<StockAlertBackgroundService>();
-builder.Services.AddTransient<IEmailService, EmailService>();
+
 
 builder.Services.AddDbContext<MyDbContext> (options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -93,7 +98,13 @@ builder.Services.AddRouting(Options => Options.LowercaseUrls = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+        c.SwaggerDoc("v3", new OpenApiInfo 
+        {
+            Title = "Gestion de Inventario API",
+            Version = "v3",
+            Description = "API for Gestion de Inventario with a background service that notifies about products with low stock via email."
+        }
+        );
         
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
@@ -173,7 +184,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("BDD"))
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", "My API v3"));
 }
 
 app.UseCors("*");

@@ -1,7 +1,8 @@
 
 
 using AutoMapper;
-
+using GestionInventario.src.Modules.Notifications.Alerts.Domain.Dtos;
+using GestionInventario.src.Modules.Notifications.Alerts.Domain.Models;
 using GestionInventario.src.Modules.ProductsManagement.Categories.Domain.DTOs;
 using GestionInventario.src.Modules.ProductsManagement.Categories.Domain.Models;
 using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.DTOs;
@@ -33,6 +34,12 @@ namespace GestionInventario.src.Core.AutoMapperPrf
             CreateUserMaps();
             CreateAddressMaps();
             CreateMovementMaps();
+            CreateStockAlertMaps();
+        }
+
+        private void CreateStockAlertMaps()
+        {
+            CreateMap<StockAlert, StockAlertResponse>().ReverseMap();
         }
 
         private void CreateMovementMaps()
