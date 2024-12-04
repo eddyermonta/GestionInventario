@@ -25,7 +25,7 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
                     // Manejar errores y lanzar excepciones
                     throw new InvalidOperationException("Error al enviar el correo electrónico.", ex);
                 }
-                await Task.Delay(TimeSpan.FromHours(1), stoppingToken); //change this for presentation
+                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken); //change this for presentation
 
             }
             

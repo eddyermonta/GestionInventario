@@ -11,7 +11,7 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Controllers
         private readonly IStockAlertService _stockAlertService = stockAlertService;
 
         [HttpPost("resolver/{alertId}")]
-        public async Task<IActionResult> ResolveAlert(int alertId)
+        public async Task<IActionResult> ResolveAlert(Guid alertId)
         {
             var success = await _stockAlertService.ResolveAlertAsync(alertId);
             if (!success) return NotFound();

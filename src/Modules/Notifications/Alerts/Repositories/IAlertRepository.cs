@@ -6,8 +6,8 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Repositories
     {
         Task<IEnumerable<StockAlert>> GetAlertsByStatusAsync(bool isResolved);
         Task AddAlertAsync(StockAlert alert);
-        Task<IEnumerable<StockAlert>> GetAlertsByProductIdAsync(int productId);
-        Task<StockAlert> GetAlertByIdAsync(int alertId);
+        Task<IEnumerable<StockAlert>> GetAlertsByProductIdAsync(Guid productId);
+        Task<StockAlert> GetAlertByIdAsync(Guid alertId);
         Task<bool> UpdateAlertAsync(StockAlert alert);
 
     }

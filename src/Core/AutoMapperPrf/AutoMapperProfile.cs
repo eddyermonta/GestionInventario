@@ -40,6 +40,8 @@ namespace GestionInventario.src.Core.AutoMapperPrf
         private void CreateStockAlertMaps()
         {
             CreateMap<StockAlert, StockAlertResponse>().ReverseMap();
+            CreateMap<StockAlertResponse, StockAlert>();
+
         }
 
         private void CreateMovementMaps()

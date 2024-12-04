@@ -50,16 +50,14 @@ namespace GestionInventario.src.Modules.ProductsManagement.Products.Controllers
         /// <response code="400">The supplier was not found</response>
         /// <response code="404">The product cannot be inserted</response>
          
-        [Authorize(Roles = "AUXILIAR, ADMIN")]
+        [Authorize(Roles = "ADMIN, AUXILIAR")]
         [HttpPost ("{NIT}",Name = "AddProduct")]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddProduct([FromBody] ProductRequest productRequest, [FromRoute] string NIT)
         {
-            if (!ModelState.IsValid || 
-                !DateTime.TryParseExact(productRequest.ExpirationDate, "yyyy/MM/dd", 
-                    CultureInfo.InvariantCulture, DateTimeStyles.None, out _) ) 
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState); // Devuelve 400 si el modelo no es válido
 
             // Comprueba si el proveedor existe

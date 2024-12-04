@@ -4,22 +4,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GestionInventario.src.Modules.Notifications.Alerts.Repositories
 {
-    public class AlertRepository ( MyDbContext myDbContext)  : IAlertRepository
+    public class AlertRepository(MyDbContext myDbContext) : IAlertRepository
     {
         private readonly MyDbContext _context = myDbContext;
+
         public async Task AddAlertAsync(StockAlert alert)
         {
             await _context.StockAlertsBD.AddAsync(alert);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<StockAlert> GetAlertByIdAsync(int alertId)
+
+        public async Task<StockAlert> GetAlertByIdAsync(Guid alertId)
         {
             var alert = await _context.StockAlertsBD.FindAsync(alertId);
             return alert ?? throw new InvalidOperationException("Alert not found");
         }
 
-        public async Task<IEnumerable<StockAlert>> GetAlertsByProductIdAsync(int productId)
+        public async Task<IEnumerable<StockAlert>> GetAlertsByProductIdAsync(Guid productId)
         {
             return await _context.StockAlertsBD.ToListAsync();
         }

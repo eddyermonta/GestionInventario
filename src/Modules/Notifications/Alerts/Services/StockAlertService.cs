@@ -7,6 +7,7 @@ using GestionInventario.src.Modules.ProductsManagement.Products.Repositories;
 using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.DTOs;
 using Microsoft.Extensions.Options;
 using GestionInventario.src.Modules.ProductsManagement.Movements.Domains.Models.Enum;
+using GestionInventario.src.Modules.Notifications.Alerts.Domain.Models;
 
 namespace GestionInventario.src.Modules.Notifications.Alerts.Services
 {
@@ -91,7 +92,15 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
 
                 if (finalAmount < product.MinimumStock)
                 {
-                    stockLevels.Add(new StockAlertResponse 
+                     var existingAlert = await _alertRepository.GetAlertsByProductIdAsync(product.Id);
+
+                    if (existingAlert != null && existingAlert.Any(alert => !alert.IsResolved))
+                    {
+                        continue; // La alerta ya está en la base de datos y no se resuelve, así que no la insertamos de nuevo.
+                    }
+
+
+                   var stockAlertResponse = new StockAlertResponse
                     {
                         ProductId = g.Key.HasValue ? g.Key.Value : Guid.Empty,
                         AlertDate = DateTime.UtcNow,
@@ -100,7 +109,11 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
                         ResolvedDate = null,
                         CurrentStock = finalAmount,
                         MinimumStock = product.MinimumStock,
-                    });
+                    };
+                    
+                    var stockAlertEntity = _mapper.Map<StockAlert>(stockAlertResponse);
+                     await _alertRepository.AddAlertAsync(stockAlertEntity);
+                      stockLevels.Add(stockAlertResponse);
                 }
             }
 
@@ -108,7 +121,7 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
         }
 
 
-        public async Task<bool> ResolveAlertAsync(int alertId)
+        public async Task<bool> ResolveAlertAsync(Guid alertId)
         {
             // Paso 1: Obtener la alerta por su ID
             var alert = await _alertRepository.GetAlertByIdAsync(alertId) ?? throw new KeyNotFoundException($"No se encontró una alerta con el ID {alertId}.");

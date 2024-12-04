@@ -8,7 +8,7 @@ namespace GestionInventario.src.Modules.Notifications.Alerts.Services
     {
         Task<IEnumerable<StockAlertResponse>?> GetLowStockProductsAsync();
         Task CheckAndNotifyLowStockAsync();
-        Task<bool> ResolveAlertAsync(int alertId);
+        Task<bool> ResolveAlertAsync(Guid alertId);
         Task<IEnumerable<StockAlertResponse>> GetAlertsByStatusAsync();
 
     }
